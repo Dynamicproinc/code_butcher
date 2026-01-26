@@ -1,0 +1,28 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap');
+
+.cart-table{
+    max-height: 550px;
+    overflow-y: auto;
+}
+.c-table{
+    font-size: 14px;
+}
+.sm-font{
+    font-size: 13px;
+}
+.navbar{
+    background-color: #000;
+    color: #fff;
+    height: 50px;
+    margin-bottom: 16px;
+}
+.navbar-cont{
+    display: flex;
+    /* justify-content: center; */
+    align-items: center;
+    font-size: 14px;
+}
+.logo{
+    font-family: "Fira Code", monospace;
+}
