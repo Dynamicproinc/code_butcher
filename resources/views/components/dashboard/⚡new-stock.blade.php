@@ -121,13 +121,13 @@ new class extends Component {
                     $v = ProductVariation::where('wc_product_id', $product->wc_product_id)->where('variation_code', $item['variation'])->first();
 
                     if ($v) {
-                        $v->quantity += $item['quantity'];
-                        $v->save();
+                        // $v->quantity += $item['quantity'];
+                        // $v->save();
 
                         // updating quantites in wc
                         // $this->updateWc($v->wc_product_id, $v->wc_variation_id, $v->quantity);
                         $wc = new WooCommerceService;
-                        $wc->updateStock($v->wc_product_id, $v->wc_variation_id, $v->quantity);
+                        $wc->updateStock($v->wc_product_id, $v->wc_variation_id, $item['quantity']);
                          $this->writeLog('Product ID: '.$item['code'].' Variation ID: '. $item['variation'].' Update success.');
                     } else {
                         $this->writeLog('Product ID: '.$item['code'].' Variation ID: '. $item['variation'].' Update faild.');

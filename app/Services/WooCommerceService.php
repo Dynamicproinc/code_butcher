@@ -19,13 +19,24 @@ class WooCommerceService
     {
         if ($variationId) {
             $endpoint = "/wp-json/wc/v3/products/$productId/variations/$variationId";
+            $current_stock = $this->client->get("/wp-json/wc/v3/products/$productId/variations/$variationId");
+             
         } else {
             $endpoint = "/wp-json/wc/v3/products/$productId";
+            $current_stock = $this->client->get("/wp-json/wc/v3/products/$productId");
         }
+
+        $product = json_decode($current_stock->getBody(), true);
+
+        // dd($product->stock_quantity);
+        
+        $new_stock = ($product['stock_quantity'] ?? 0) + $stock;
+
+       
 
         $response = $this->client->put($endpoint, [
             'json' => [
-                'stock_quantity' => $stock,
+                'stock_quantity' =>$new_stock,
                 'manage_stock' => true
             ]
         ]);
