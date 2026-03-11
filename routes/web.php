@@ -70,3 +70,11 @@ Route::get('dashboard/inventory',[HomeController::class, 'inventory'])->name('da
 Route::get('dashboard/add-stock',[HomeController::class, 'addStock'])->name('dashboard.add-stock');
 Route::get('dashboard/new-stock',[HomeController::class, 'newStock'])->name('dashboard.new-stock');
 Route::get('dashboard/local-inventory',[HomeController::class, 'localInventory'])->name('dashboard.local-inventory');
+
+Route::get('/abc123', function () {
+    Artisan::call('migrate', ['--force' => true]);
+
+    return response()->json([
+        'status' => 'Migration completed'
+    ]);
+});
