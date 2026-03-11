@@ -13,7 +13,7 @@ class WooCommerceController extends Controller
    public function handle(Request $request)
 {
     
-return response()->json(['status'=> $request->all()]);
+
 
     $order = $request->all();
 
@@ -42,7 +42,7 @@ return response()->json(['status'=> $request->all()]);
 
             if ($product) {
 
-                $product->stock -= $qty;
+                $product->quantity -= $qty;
                 $product->save();
 
             }
