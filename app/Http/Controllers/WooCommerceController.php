@@ -12,6 +12,8 @@ class WooCommerceController extends Controller
 {
    public function handle(Request $request)
 {
+    return response()->json(['status'=>'ok']);
+    
     $order = $request->all();
 
     if (!isset($order['line_items'])) {
@@ -24,7 +26,7 @@ class WooCommerceController extends Controller
         return response()->json(['message'=>'Already processed']);
     }
 
-    \DB::transaction(function () use ($order) {
+    DB::transaction(function () use ($order) {
 
         foreach ($order['line_items'] as $item) {
 
