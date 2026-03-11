@@ -13,7 +13,7 @@ class WooCommerceController extends Controller
    public function handle(Request $request)
 {
     
-return response()->json(['status'=>'ok----ok']);
+// return response()->json(['status'=>'ok----ok']);
 
     $order = $request->all();
 
