@@ -3,12 +3,13 @@
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Http;
+use App\Http\Controllers\WooCommerceController;
 use GuzzleHttp\Client;
 
 // Route::get('/', function () {
 //     return view('welcome');
 // });
-
+Route::post('/wc/webhook', [WooCommerceController::class, 'handle']);
 Route::livewire('/dashboard/test', 'dashboard.test')->name('dashboard.test');
 // Route::livewire('/dashboard/add-stock', 'dashboard.add_stock')->name('dashboard.add-stock');
 // Route::livewire('/dashboard/inventory', 'dashboard.inventory')->name('dashboard.inventory');
