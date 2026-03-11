@@ -13,13 +13,14 @@ class WooCommerceController extends Controller
    public function handle(Request $request)
 {
     
- return response()->json(['status'=>'ok']);
- 
+
+
     $order = $request->all();
 
     if (!isset($order['line_items'])) {
         return response()->json(['message'=>'No items']);
     }
+    
 
     $orderId = $order['id'];
 
