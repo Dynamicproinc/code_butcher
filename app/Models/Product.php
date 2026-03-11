@@ -9,4 +9,8 @@ class Product extends Model
      protected $casts = [
         'levels' => 'array',
     ];
+
+    public function variations(){
+       return $this->hasMany(ProductVariation::class);
+    }
 }

@@ -16,14 +16,15 @@ new class extends Component {
     public $customer_id;
     public $customers = [];
 
-
-    public function mount(){
+    public function mount()
+    {
         $this->customers = Customer::all();
     }
     public function addItem()
     {
-        // split number
-        //2800104080650
+        // $threshold = 20;
+        // $last_number = floor($last_number / $threshold) * $threshold;
+        // dd($last_number);
 
         $product_code = substr($this->barcode, 4, 3);
         $weight = substr($this->barcode, 7, 5);
@@ -34,30 +35,61 @@ new class extends Component {
             $this->error_message = null;
             $this->product = $product;
             $cartItems = session()->get('cart_items', []);
+
             if (!empty($cartItems)) {
+                if ($cartItems[0]['code'] !== $product->product_code) {
+                    $this->error_message = __('You cannot add different items in manual mode');
 
-    if ($cartItems[0]['code'] !== $product->product_code) {
+                    return;
+                }
+            }
 
-        $this->error_message = __('You cannot add different items in manual mode');
+            $variation = '0';
 
-        return;
-    }
-}
-            session()->push('cart_items', [
-                'barcode' => $this->barcode,
-                'code' => $product->product_code,
-                'description' => $product->product_name,
-                'variation' => $product->variation,
-                'quantity' => 1,
-                'weight' => $weight_in_kg,
-            ]);
-        }else{
+            if ($product->variation) {
+                $variation = $weight - ($weight % $product->threshold);
+                $cartItems = session()->get('cart_items', []);
 
+                $found = false;
+
+                foreach ($cartItems as $key => $item) {
+                    if ($item['variation'] == $variation) {
+                        $cartItems[$key]['quantity'] += 1;
+                        $cartItems[$key]['weight'] += $weight_in_kg;
+                        $found = true;
+                        break;
+                    }
+                }
+
+                if (!$found) {
+                    $cartItems[] = [
+                        'barcode' => $this->barcode,
+                        'code' => $product->product_code,
+                        'description' => $product->product_name,
+                        'variation' => $variation,
+                        'quantity' => 1,
+                        'weight' => $weight_in_kg,
+                    ];
+                }
+
+                session()->put('cart_items', $cartItems);
+            } else {
+                $cartItems[] = [
+                    'barcode' => $this->barcode,
+                    'code' => $product->product_code,
+                    'description' => $product->product_name,
+                    'variation' => $variation,
+                    'quantity' => 1,
+                    'weight' => $weight_in_kg,
+                ];
+                session()->put('cart_items', $cartItems);
+            }
+            // if product has variations
+        } else {
             $this->error_message = __('Invalid barcode');
         }
 
         $this->barcode = '';
-
     }
 
     public function removeItem($key)
@@ -77,31 +109,47 @@ new class extends Component {
     public function addToInvoice()
     {
         $this->validate([
-            'remark' => 'required'
+            'remark' => 'required',
         ]);
         // manual mode
         if ($cart_items = session('cart_items', [])) {
-
             //lets_findouthe product now
             $code = $cart_items[0]['code'];
             $product = Product::where('product_code', $code)->first();
-            if($product){
+            if ($product) {
+                if(!$product->variation){
 
-                $invoice_items = session()->push('invoice_items',[
-                    'product_id' => $product->id,
-                    'product_code' => $code,
-                    'remark'=> $this->remark,
-                    'product_description'=> $product->product_name,
-                    'quantity' => count(session('cart_items', [])),
-                    'total_weight' => collect(session('cart_items', []))->sum('weight'),
-                    'items' => session('cart_items', []),
-                ]);
+                    $invoice_items = session()->push('invoice_items', [
+                        'product_id' => $product->id,
+                        'product_code' => $code,
+                        'remark' => $this->remark,
+                        'product_description' => $product->product_name,
+                        'variation' => '0',
+                        'quantity' => count(session('cart_items', [])),
+                        'total_weight' => collect(session('cart_items', []))->sum('weight'),
+                        'items' => session('cart_items', []),
+                    ]);
+                }else{
+                    foreach($cart_items as $item){
+                         $invoice_items = session()->push('invoice_items', [
+                        'product_id' => $product->id,
+                        'product_code' => $code,
+                        'remark' => $this->remark,
+                        'product_description' => $product->product_name,
+                        'variation' =>  $item['variation'],
+                        'quantity' => $item['quantity'],
+                        'total_weight' =>$item['weight'],
+                        'items' => session('cart_items', []),
+                    ]);
+                    }
+                }
+
+
+                
             }
             //clear cart
             session()->forget('cart_items');
             $this->remark = '';
-
-
         }
 
         return null;
@@ -134,7 +182,7 @@ new class extends Component {
             ]);
 
             foreach ($invoice_items as $inv_item) {
-                $pname = $inv_item['product_code'].' - '.$inv_item['product_description'].' - '. $inv_item['remark'];
+                $pname = $inv_item['product_code'] . ' - ' . $inv_item['product_description'] .'('.$inv_item['variation'].' )'. ' - ' . $inv_item['remark'];
                 InvoiceItem::create([
                     'invoice_id' => $invoice->id,
                     'product_id' => $inv_item['product_id'],
@@ -149,7 +197,7 @@ new class extends Component {
             Mail::to('samdynmic@gmail.com')->send(new InvoiceMail($invoice));
             //clear invoice items
             session()->forget('invoice_items');
-
+            session()->flash('message', __('Invoice saved successfully.'));
         }
     }
 };
@@ -157,7 +205,7 @@ new class extends Component {
 
 <div>
     <div>
-        <div class="row">
+        {{-- <div class="row">
             <div class="col-lg-6">
                 <div class="mb-3">
 
@@ -168,24 +216,30 @@ new class extends Component {
                             <small class="text-danger">{{ $error_message }}</small>
                         @endif
                     </div>
-                    {{-- <div>
-                @if ($product)
-                 <label for="levels">{{ __('Select Level') }}</label>
-                    <select class="form-control" id="levels">
-                        <option value="">{{ __('Select') }}</option>
-                        @foreach ($product->levels as $level)
-                            <option value="{{ $level }}">{{ $level }}</option>
-                        @endforeach
-                    </select>
                    
-                @endif
-            </div> --}}
 
                 </div>
             </div>
-        </div>
+        </div> --}}
         <div class="row">
             <div class="col-lg-6">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="mb-3">
+
+                            <div class="form-group mb-3">
+                                <input type="text" class="form-control" placeholder="Enter barcode here..."
+                                    wire:model="barcode" wire:keydown.enter="addItem">
+                                @if ($error_message)
+                                    <small class="text-danger">{{ $error_message }}</small>
+                                @endif
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="cart-table mb-3">
                     <table class="table table-sm table-striped table-responsive c-table">
                         <thead>
@@ -205,6 +259,7 @@ new class extends Component {
                             @if (session('cart_items', []))
                                 @foreach (session('cart_items') as $key => $item)
                                     <tr>
+
                                         <td>{{ $item['barcode'] }}</td>
                                         <td>{{ $item['code'] }}</td>
                                         <td>{{ $item['description'] }}</td>
@@ -229,6 +284,8 @@ new class extends Component {
                     </table>
 
                 </div>
+
+
                 <div class="d-flex mb-3 justify-content-between align-items-center">
                     <div class=" sm-font">
                         {{ __('Total Items') }}: <strong>{{ count(session('cart_items', [])) }}</strong>
@@ -236,31 +293,36 @@ new class extends Component {
                             kg</strong>
                     </div>
                     <div class="">
-                         <button class="btn btn-link" wire:click="clearCart" wire:confirm="Are you sure?" @if(count(session('cart_items', [])) == 0) disabled @endif>{{ __('Clear all') }}</button>
-                       
+                        <button class="btn btn-link" wire:click="clearCart" wire:confirm="Are you sure?"
+                            @if (count(session('cart_items', [])) == 0) disabled @endif>{{ __('Clear all') }}</button>
+
                     </div>
                 </div>
                 <div>
                     <div class="row ">
-                            <div class="col-lg-8">
+                        <div class="col-lg-8">
 
-                                <input type="text" wire:model="remark" class="form-control @error('remark') is-invalid @enderror" placeholder="{{__('Remark')}}">
-                                {{-- @error('remark') <small class="text-danger">{{ $message }}</small> @enderror --}}
-                            </div>
-                            <div class="col-lg-4">
-                               
-                        <button class="btn btn-dark w-100" wire:click="addToInvoice"><i class="bi bi-plus-lg"></i> {{ __('Add') }}</button>
-                            </div>
+                            <input type="text" wire:model="remark"
+                                class="form-control @error('remark') is-invalid @enderror"
+                                placeholder="{{ __('Remark') }}">
+                            {{-- @error('remark') <small class="text-danger">{{ $message }}</small> @enderror --}}
                         </div>
+                        <div class="col-lg-4">
+
+                            <button class="btn btn-dark w-100" wire:click="addToInvoice"><i class="bi bi-plus-lg"></i>
+                                {{ __('Add') }}</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-lg-6">
-                <div class="bg-light p-3 shadow-sm border rounded">
+                <div class="p-3 shadow-sm border rounded">
                     <h6>{{ __('Summary') }}</h6>
                     <div class="mb-3">
                         <div class="form-group">
                             {{-- <label for="cus">{{ __('Customer') }}</label> --}}
-                            <select name="" class="form-control @error('customer_id') is-invalid @enderror" id="cu" wire:model="customer_id">
+                            <select name="" class="form-control @error('customer_id') is-invalid @enderror"
+                                id="cu" wire:model="customer_id">
                                 <option value="">{{ __('Select Customer') }}</option>
                                 @foreach ($customers as $customer)
                                     <option value="{{ $customer->id }}">{{ $customer->name }}</option>
@@ -276,6 +338,7 @@ new class extends Component {
                                     <th scope="col">{{ __('ID') }}</th>
                                     <th scope="col">{{ __('CODE.') }}</th>
                                     <th scope="col">{{ __('DES.') }}</th>
+                                    <th scope="col">{{ __('VA.') }}</th>
                                     <th scope="col">{{ __('QTY') }}</th>
                                     <th scope="col">{{ __('WEIGHT') }}</th>
                                     <th></th>
@@ -289,39 +352,53 @@ new class extends Component {
 
                                             <td>{{ $inv_item['product_id'] }}</td>
                                             <td>{{ $inv_item['product_code'] }}</td>
-                                            <td>{{ $inv_item['product_description'] .' - '. $inv_item['remark'] }}</td>
+                                            <td>{{ $inv_item['product_description'] . ' - ' . $inv_item['remark'] }}</td>
+                                            <td>{{ $inv_item['variation'] }}</td>
                                             <td>{{ $inv_item['quantity'] }}</td>
                                             <td>{{ $inv_item['total_weight'] }}</td>
-                                             <td>
-                                            <button class="btn btn-sm btn-outline-danger"
-                                                wire:click="removeInvoiceItem('{{ $key }}')">{{ __('Remove') }}</button>
-                                        </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-danger"
+                                                    wire:click="removeInvoiceItem('{{ $key }}')">{{ __('Remove') }}</button>
+                                            </td>
                                         </tr>
                                     @endforeach
-                                    
                                 @else
-                                     <tr>
-                                    <td colspan="5" class="text-center">{{ __('No items added yet.') }}</td>
-                                </tr>
+                                    <tr>
+                                        <td colspan="7" class="text-center">{{ __('No items added yet.') }}</td>
+                                    </tr>
                                 @endif
-                               
+
 
                             </tbody>
                         </table>
                         <div class="d-flex mb-3 justify-content-between align-items-center">
-                    <div class=" sm-font">
-                        {{ __('Total Items') }}: <strong>{{ count(session('invoice_items', [])) }}</strong>
-                        {{ __('Total Weight') }}: <strong>{{ collect(session('invoice_items', []))->sum('total_weight') }}
-                            kg</strong>
-                    </div>
-                    <div class="">
-                         <button class="btn btn-link" wire:click="clearCartInvoice" wire:confirm="Are you sure?" @if(count(session('invoice_items', [])) == 0) disabled @endif>{{ __('Clear all') }}</button>
-                       
-                    </div>
-                </div>
-                <div class="d-flex flex-row-reverse">
-                    <button class="btn btn-primary btn-sm" wire:click="saveInvoice">{{ __('Save') }}</button>
-                </div>
+                            <div class=" sm-font">
+                                {{ __('Total Items') }}: <strong>{{ count(session('invoice_items', [])) }}</strong>
+                                {{ __('Total Weight') }}:
+                                <strong>{{ collect(session('invoice_items', []))->sum('total_weight') }}
+                                    kg</strong>
+                            </div>
+                            <div class="">
+                                <button class="btn btn-link" wire:click="clearCartInvoice" wire:confirm="Are you sure?"
+                                    @if (count(session('invoice_items', [])) == 0) disabled @endif>{{ __('Clear all') }}</button>
+
+                            </div>
+                        </div>
+                        <div class="d-flex flex-row-reverse">
+                           
+                            <button class="btn btn-primary btn-sm"
+                                wire:click="saveInvoice" wire:loading.attr="disabled">
+                                <span class="spinner-border spinner-border-sm" role="status" wire:loading wire:target="saveInvoice">
+                                <span class="visually-hidden">Loading...</span>
+                                </span>
+                                {{ __('Save') }}
+                            </button>
+                        </div>
+                        <div class="d-flex flex-row-reverse py-3">
+                             @if(session('message'))
+                                <div class="badge bg-success-subtle border border-success-subtle text-success-emphasis rounded-pill">{{ session('message') }}</div>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>

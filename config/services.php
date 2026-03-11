@@ -28,6 +28,12 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'woocommerce' => [
+    'url' => env('WC_URL'),
+    'key' => env('WC_KEY'),
+    'secret' => env('WC_SECRET'),
+],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
