@@ -55,8 +55,9 @@ class HomeController extends Controller
         config('services.woocommerce.key'),
         config('services.woocommerce.secret')
     )->get(config('services.woocommerce.url') . '/wp-json/wc/v3/products', [
-        'per_page' => 20,
-        'page' => $page
+        'per_page' => 100,
+        'page' => $page,
+         'status' => 'publish'
     ]);
 
     if ($response->failed()) {
