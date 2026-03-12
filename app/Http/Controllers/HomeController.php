@@ -27,11 +27,44 @@ class HomeController extends Controller
         return view('dashboard.index');
     }
 
-    public function inventory(){
-         $products = Http::withBasicAuth(
+    public function inventory(Request $request){
+    //      $products = Http::withBasicAuth(
+    //     config('services.woocommerce.key'),
+    //     config('services.woocommerce.secret')
+    // )->get(config('services.woocommerce.url').'/wp-json/wc/v3/products')->json();
+
+    // foreach ($products as &$product) {
+
+    //     if ($product['type'] == 'variable') {
+
+    //         $variations = Http::withBasicAuth(
+    //             config('services.woocommerce.key'),
+    //             config('services.woocommerce.secret')
+    //         )->get(config('services.woocommerce.url')."/wp-json/wc/v3/products/".$product['id']."/variations")->json();
+
+    //         $product['variations'] = $variations;
+    //     }
+    // }
+
+    // return view('dashboard.inventory', compact('products'));
+        // return view('dashboard.inventory');
+
+         $page = $request->get('page', 1);
+
+    $response = Http::withBasicAuth(
         config('services.woocommerce.key'),
         config('services.woocommerce.secret')
-    )->get(config('services.woocommerce.url').'/wp-json/wc/v3/products')->json();
+    )->get(config('services.woocommerce.url') . '/wp-json/wc/v3/products', [
+        'per_page' => 20,
+        'page' => $page
+    ]);
+
+    if ($response->failed()) {
+        dd($response->body());
+    }
+
+    $products = $response->json();
+    $totalPages = $response->header('X-WP-TotalPages');
 
     foreach ($products as &$product) {
 
@@ -40,14 +73,20 @@ class HomeController extends Controller
             $variations = Http::withBasicAuth(
                 config('services.woocommerce.key'),
                 config('services.woocommerce.secret')
-            )->get(config('services.woocommerce.url')."/wp-json/wc/v3/products/".$product['id']."/variations")->json();
+            )->get(
+                config('services.woocommerce.url') . '/wp-json/wc/v3/products/' . $product['id'] . '/variations',
+                ['per_page' => 100]
+            )->json();
 
             $product['variations'] = $variations;
         }
     }
 
-    return view('dashboard.inventory', compact('products'));
-        // return view('dashboard.inventory');
+    return view('dashboard.inventory', [
+        'products' => $products,
+        'page' => $page,
+        'totalPages' => $totalPages
+    ]);
     }
 
     public function addStock(){
