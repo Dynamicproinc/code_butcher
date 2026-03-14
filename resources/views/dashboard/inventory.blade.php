@@ -4,7 +4,7 @@
 @section('content')
 <div class="container mt-4">
   <div class="d-flex flex-row-reverse mb-3">
-    <a href="{{route('dashboard.add-stock')}}" class="btn btn-primary">{{__('Add stock')}}</a>
+    <a href="{{route('dashboard.new-stock')}}" class="btn btn-primary">{{__('New stock')}}</a>
   </div>
     {{-- @livewire('dashboard.inventory') --}}
 
@@ -22,46 +22,57 @@
             </thead>
             <tbody>
 
-                @foreach ($products as $product)
-                    @if (isset($product['variations']))
-                        @foreach ($product['variations'] as $key => $variation)
-                            <tr>
+               @foreach ($products as $product)
 
-                                {{-- Show product name only on first variation row --}}
-                                @if ($key == 0)
-                                    <td rowspan="{{ count($product['variations']) }}" class="fw-bold text-primary">
-                                        {{ $product['name'] }}
-                                    </td>
+    {{-- VARIABLE PRODUCTS --}}
+    @if (!empty($product['variations']))
 
-                                    <td rowspan="{{ count($product['variations']) }}">
-                                        {{ $product['id'] }}
-                                    </td>
-                                @endif
+        @foreach ($product['variations'] as $key => $variation)
+            <tr>
 
-                                <td>{{ $variation['id'] }}</td>
+                @if ($key == 0)
+                    <td rowspan="{{ count($product['variations']) }}" class="fw-bold text-primary">
+                        {{ $product['name'] }}
+                    </td>
 
-                                <td>
-                                    {{ $variation['attributes'][0]['option'] ?? '-' }}
-                                </td>
+                    <td rowspan="{{ count($product['variations']) }}">
+                        {{ $product['id'] }}
+                    </td>
+                @endif
 
-                                <td>
-                                    <span class="badge bg-success">
-                                        {{ $variation['stock_quantity'].$variation['sku'] }}
-                                    </span>
-                                </td>
+                <td>{{ $variation['id'] }}</td>
 
-                            </tr>
-                        @endforeach
-                    @else
-                        <tr>
-                            <td class="fw-bold text-primary">{{ $product['name'] }}</td>
-                            <td>{{ $product['id'] }}</td>
-                            <td colspan="3" class="text-muted text-center">
-                                No Variations
-                            </td>
-                        </tr>
-                    @endif
-                @endforeach
+                <td>
+                    {{ $variation['attributes'][0]['option'] ?? '-' }}
+                </td>
+
+                <td>
+                    <span class="badge bg-success">
+                        {{ $variation['stock_quantity'] }} {{ $variation['sku'] }}
+                    </span>
+                </td>
+
+            </tr>
+        @endforeach
+
+    {{-- SIMPLE PRODUCTS --}}
+    @else
+
+        <tr>
+            <td class="fw-bold text-primary">{{ $product['name'] }}</td>
+            <td>{{ $product['id'] }}</td>
+            <td>-</td>
+            <td>-</td>
+            <td>
+                <span class="badge bg-success">
+                    {{ $product['stock_quantity'] }} {{ $product['sku'] }}
+                </span>
+            </td>
+        </tr>
+
+    @endif
+
+@endforeach
 
             </tbody>
         </table>

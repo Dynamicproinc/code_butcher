@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use App\Models\Product;
+use App\Models\StockTransaction;
 class HomeController extends Controller
 {
     /**
@@ -28,26 +29,7 @@ class HomeController extends Controller
     }
 
     public function inventory(Request $request){
-    //      $products = Http::withBasicAuth(
-    //     config('services.woocommerce.key'),
-    //     config('services.woocommerce.secret')
-    // )->get(config('services.woocommerce.url').'/wp-json/wc/v3/products')->json();
-
-    // foreach ($products as &$product) {
-
-    //     if ($product['type'] == 'variable') {
-
-    //         $variations = Http::withBasicAuth(
-    //             config('services.woocommerce.key'),
-    //             config('services.woocommerce.secret')
-    //         )->get(config('services.woocommerce.url')."/wp-json/wc/v3/products/".$product['id']."/variations")->json();
-
-    //         $product['variations'] = $variations;
-    //     }
-    // }
-
-    // return view('dashboard.inventory', compact('products'));
-        // return view('dashboard.inventory');
+    
 
          $page = $request->get('page', 1);
 
@@ -55,7 +37,7 @@ class HomeController extends Controller
         config('services.woocommerce.key'),
         config('services.woocommerce.secret')
     )->get(config('services.woocommerce.url') . '/wp-json/wc/v3/products', [
-        'per_page' => 100,
+        'per_page' => 20,
         'page' => $page,
          'status' => 'publish'
     ]);
@@ -76,7 +58,7 @@ class HomeController extends Controller
                 config('services.woocommerce.secret')
             )->get(
                 config('services.woocommerce.url') . '/wp-json/wc/v3/products/' . $product['id'] . '/variations',
-                ['per_page' => 100]
+                ['per_page' => 20]
             )->json();
 
             $product['variations'] = $variations;
@@ -102,4 +84,17 @@ class HomeController extends Controller
         $products = Product::paginate(10);
         return view('dashboard.inventory.local-inventory', compact('products'));
     }
+
+    public function addProduct(){
+        return view('dashboard.products.add-new');
+    }
+    public function dispatchStock(){
+        return view('dashboard.dispatch-stock');
+    }
+    public function logs(){
+        $logs = StockTransaction::latest()->paginate(50);
+        return view('dashboard.log', compact('logs'));
+    }
+
+
 }

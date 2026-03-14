@@ -11,7 +11,6 @@ use App\Models\Customer;
 use GuzzleHttp\Client;
 use App\Services\WooCommerceService;
 
-
 new class extends Component {
     public $barcode;
     public $item_code, $description;
@@ -20,6 +19,7 @@ new class extends Component {
     public $remark;
     public $customer_id;
     public $customers = [];
+    public $log = [];
 
     public function addItem()
     {
@@ -75,7 +75,20 @@ new class extends Component {
 
                 session()->put('cart_items', $cartItems);
             } else {
-                $cartItems[] = [
+                 $citems = session()->get('cart_items', []);
+                $found_item = false;
+
+                foreach($citems as $key => $item){
+                    if($item['code'] == $product_code){
+                         $citems[$key]['quantity'] += 1;
+                        $citems[$key]['weight'] += $weight_in_kg;
+                        $found_item = true;
+                        break;
+                    }
+                }
+
+                if(!$found_item){
+                     $citems[] = [
                     'barcode' => $this->barcode,
                     'code' => $product->product_code,
                     'description' => $product->product_name,
@@ -83,7 +96,10 @@ new class extends Component {
                     'quantity' => 1,
                     'weight' => $weight_in_kg,
                 ];
-                session()->put('cart_items', $cartItems);
+                }
+
+               
+                session()->put('cart_items', $citems);
             }
             // if product has variations
         } else {
@@ -92,6 +108,7 @@ new class extends Component {
 
         $this->barcode = '';
     }
+
     public function removeItem($key)
     {
         $cart_items = session('cart_items', []);
@@ -109,6 +126,7 @@ new class extends Component {
     public function update()
     {
         $cart_items = session()->get('cart_items', []);
+         $wc = new WooCommerceService();
         foreach ($cart_items as $item) {
             // dd($item['code']);
             // find the prpoduct
@@ -126,18 +144,25 @@ new class extends Component {
 
                         // updating quantites in wc
                         // $this->updateWc($v->wc_product_id, $v->wc_variation_id, $v->quantity);
-                        $wc = new WooCommerceService;
+                       
                         $wc->updateStock($v->wc_product_id, $v->wc_variation_id, $item['quantity']);
-                         $this->writeLog('Product ID: '.$item['code'].' Variation ID: '. $item['variation'].' Update success.');
+                        $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update success.');
                     } else {
-                        $this->writeLog('Product ID: '.$item['code'].' Variation ID: '. $item['variation'].' Update faild.');
+                        $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update faild.');
                     }
                 } else {
+
+                    $wc->updateStock($product->wc_product_id, null, $item['quantity']);
                     $product->quantity += $item['quantity'];
                     $product->save();
+                     $this->writeLog("Product ID: {$item['code']} Variation ID: " . ($item['variation'] ?? 0) . " Update success.");
                 }
+            }else{
+                $this->writeLog("Product ID: {$item['code']} Variation ID: " . ($item['variation'] ?? 0) . " Update failed.");
             }
         }
+        session()->forget('cart_items');
+        
     }
 
     public function updateWc($product_id, $variation_id, $quantity)
@@ -166,6 +191,10 @@ new class extends Component {
         $logMessage = '[' . $time . '] ' . $message . PHP_EOL;
 
         file_put_contents($file, $logMessage, FILE_APPEND);
+
+        $this->log[] = [
+            'status' => $logMessage,
+        ];
     }
 };
 ?>
@@ -248,16 +277,29 @@ new class extends Component {
                 </div>
             </div>
         </div>
+        <div>
 
-        <div class="d-flex flex-row-reverse">
+        </div>
+        <div class="d-flex flex-row-reverse mb-5">
             <div>
-                <button wire:confirm="{{__('Are you sure?')}}" class="btn btn-primary" @disabled(!count(session('cart_items', []))) wire:click="update" wire:loading.attr="disabled">
+                <button wire:confirm="{{ __('Are you sure?') }}" class="btn btn-primary" @disabled(!count(session('cart_items', [])))
+                    wire:click="update" wire:loading.attr="disabled">
                     <span class="spinner-border spinner-border-sm" role="status" wire:loading wire:target="update">
                         {{-- <span class="visually-hidden">Loading...</span> --}}
                     </span>
-                    {{ __('Save & Update') }}
+                    {{ __('Add To Stock') }}
                 </button>
             </div>
+        </div>
+        <div class="log-box">
+            @if (count($log))
+                <h6>Log</h6>
+                @foreach ($log as $item)
+                    <div class="{{ str_contains(strtolower($item['status']), 'faild') ? 'text-danger' : '' }}">
+                        {{ $item['status'] }}
+                    </div>
+                @endforeach
+            @endif
         </div>
     </div>
 </div>
