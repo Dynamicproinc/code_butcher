@@ -281,7 +281,7 @@
                     <ul class="nav flex-column">
 
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('dashboard.inventory') }}">
+                            <a class="nav-link @if (Route::currentRouteName() == 'dashboard.inventory') active @endif" href="{{ route('dashboard.inventory') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                     stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
@@ -293,7 +293,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('dashboard.new-stock') }}">
+                            <a class="nav-link @if (Route::currentRouteName() == 'dashboard.new-stock') active @endif" href="{{ route('dashboard.new-stock') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                     fill="currentColor" class="bi bi-box-arrow-in-down" viewBox="0 0 16 16">
                                     <path fill-rule="evenodd"
@@ -306,7 +306,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('dashboard.product.dispatch-stcok') }}">
+                            <a class="nav-link @if (Route::currentRouteName() == 'dashboard.product.dispatch-stcok') active @endif" href="{{ route('dashboard.product.dispatch-stcok') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                     fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
                                     <path fill-rule="evenodd"
@@ -318,7 +318,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('dashboard.product.add-product') }}">
+                            <a class="nav-link @if (Route::currentRouteName() == 'dashboard.product.add-product') active @endif" href="{{ route('dashboard.product.add-product') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                     stroke-linecap="round" stroke-linejoin="round" class="feather feather-layers">
@@ -330,7 +330,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link @if (Route::currentRouteName() == 'dashboard.logs') active @endif" href="{{route('dashboard.logs')}}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                     fill="currentColor" class="bi bi-folder" viewBox="0 0 16 16">
                                     <path
