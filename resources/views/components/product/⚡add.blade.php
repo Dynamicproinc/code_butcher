@@ -64,12 +64,16 @@ new class extends Component {
 
     public function updatedWcProductId()
     {
-        $wc = new WooCommerceService();
+       if($this->wc_product_id){
+         $wc = new WooCommerceService();
 
         $response = $wc->getVariation($this->wc_product_id); // Guzzle Response
         $json = $response->getBody()->getContents(); // Get raw JSON string
 
         $this->product_variations = json_decode($json, true) ?? [];
+       }else{
+         $this->product_variations = null;
+       }
     }
 
     // public function updatedProductCode()

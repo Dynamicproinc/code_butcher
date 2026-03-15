@@ -25,7 +25,7 @@
       <td>{{ $item->user->name }}</td>
       <td>{{ $item->type }}</td>
       <td>{{ $item->getProduct()->product_name }}</td>
-      <td>{{ $item->variation_id }}</td>
+      <td>{{ $item->variation_id }} | {{ $item->variation_code }}</td>
       <td>{{ $item->wc_stock }}</td>
       <td>{{ $item->quantity }}</td>
       <td>{{ $item->balance }}</td>

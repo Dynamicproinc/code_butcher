@@ -59,6 +59,8 @@ class WooCommerceService
        
         // $result = json_decode($response->getBody(), true);
     }
+
+    
     public function dispatchStock($productId, $variationId, $stock)
     {
         if ($variationId) {
@@ -114,7 +116,9 @@ class WooCommerceService
 
     public function getVariation($wc_product_id)
     {
-        $variations = $this->client->get(
+        
+       if($wc_product_id){
+         $variations = $this->client->get(
             "/wp-json/wc/v3/products/$wc_product_id/variations",
             [
                 'query' => [
@@ -122,8 +126,11 @@ class WooCommerceService
                 ]
             ]
         );
-
         return $variations;
+       }
+
+       
+
     }
 
     public function getVariationQuantity($product_id, $variation_id){

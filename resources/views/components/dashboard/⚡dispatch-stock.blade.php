@@ -132,8 +132,8 @@ new class extends Component {
                        $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update faild.');
                     }
                 } else {
-                     $wc->updateStock($product->wc_product_id, null, $item['quantity']);
-                    $product->quantity += $item['quantity'];
+                     $wc->dispatchStock($product->wc_product_id, null, $item['quantity']);
+                    $product->quantity -= $item['quantity'];
                     $product->save();
                      $this->writeLog("Product ID: {$item['code']} Variation ID: " . ($item['variation'] ?? 0) . " Update success.");
                 }
