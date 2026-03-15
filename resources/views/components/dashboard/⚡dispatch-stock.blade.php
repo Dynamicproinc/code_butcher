@@ -157,6 +157,38 @@ new class extends Component {
             'status' => $logMessage,
         ];
     }
+
+     public function increment($id){
+        $cart_items = session('cart_items_for_dispatch', []);
+        if(isset($cart_items[$id])){
+            // dd( $cart_items[$id]['quantity']);
+            $cart_items[$id]['quantity'] =    $cart_items[$id]['quantity'] + 1;
+             session(['cart_items_for_dispatch' => array_values($cart_items)]);
+        }
+        // foreach($cart_items as $key => $item){
+
+        // }
+    }
+    public function decrement($id){
+        $cart_items = session('cart_items_for_dispatch', []);
+        if(isset($cart_items[$id])){
+            // dd( $cart_items[$id]['quantity']);
+            $cart_items[$id]['quantity'] =    $cart_items[$id]['quantity'] - 1;
+            if($cart_items[$id]['quantity'] <= 0){
+                 $cart_items[$id]['quantity'] = 1;
+            }
+             session(['cart_items_for_dispatch' => array_values($cart_items)]);
+        }
+        // foreach($cart_items as $key => $item){
+
+        // }
+    }
+
+    
+    public function clearCart()
+    {
+        session()->forget('cart_items_for_dispatch');
+    }
       
 };
 ?>
@@ -165,18 +197,18 @@ new class extends Component {
     <div class="p-3">
 
         <div class="row">
-            <div class="form-group mb-3 col-10">
-                <input type="text" class="form-control form-control-lg" placeholder="{{ __('Scan Barcode') }}"
+            <div class="form-group mb-3 col-12">
+                <input type="text" class="form-control" placeholder="{{ __('Scan Barcode') }}"
                     wire:model="barcode" wire:keydown.enter="addDispatchCart">
                 @if ($error_message)
                     <small class="text-danger">{{ $error_message }}</small>
                 @endif
             </div>
-            <div class="col-2">
+            {{-- <div class="col-2">
                 <div class="spinner-border" role="status" wire:loading wire:target="addDispatchCart">
-                    {{-- <span class="visually-hidden">Loading...</span> --}}
+                    
                 </div>
-            </div>
+            </div> --}}
         </div>
         <div class="cart-table mb-5">
             <table class="table table-sm table-striped table-responsive c-table">
@@ -187,7 +219,7 @@ new class extends Component {
                         <th scope="col">{{ __('DESC.') }}</th>
                         <th scope="col">{{ __('VA.') }}</th>
                         <th scope="col">{{ __('QUANTITY') }}</th>
-                        <th scope="col">{{ __('WEIGHT') }}</th>
+                        {{-- <th scope="col">{{ __('WEIGHT') }}</th> --}}
                         <th scope="col"></th>
 
                     </tr>
@@ -203,8 +235,10 @@ new class extends Component {
                                 <td>{{ $item['description'] }}</td>
                                 <td>{{ $item['variation'] }}</td>
                                 <td>{{ $item['quantity'] }}</td>
-                                <td>{{ $item['weight'] }}</td>
+                                {{-- <td>{{ $item['weight'] }}</td> --}}
                                 <td>
+                                    <button class="btn btn-sm btn-outline-primary" wire:click="decrement({{ $key }})">-</button>
+                                        <button class="btn btn-sm btn-outline-primary" wire:click="increment({{ $key }})">+</button>
                                     <button class="btn btn-sm btn-outline-danger"
                                         wire:click="removeItem('{{ $key }}')">{{ __('Remove') }}</button>
                                 </td>
@@ -221,6 +255,20 @@ new class extends Component {
                 </tbody>
             </table>
 
+        </div>
+        <div class="mb-5">
+            <div class="d-flex mb-3 justify-content-between align-items-center">
+                <div class=" sm-font">
+                    {{ __('Total Items') }}: <strong>{{ count(session('cart_items_for_dispatch', [])) }}</strong>
+                    {{-- {{ __('Total Weight') }}: <strong>{{ collect(session('cart_items', []))->sum('weight') }}
+                        kg</strong> --}}
+                </div>
+                <div class="">
+                    <button class="btn btn-link" wire:click="clearCart" wire:confirm="Are you sure?"
+                        @if (count(session('cart_items_for_dispatch', [])) == 0) disabled @endif>{{ __('Clear all') }}</button>
+
+                </div>
+            </div>
         </div>
         <div class="d-flex flex-row-reverse">
             <button class="btn btn-primary"  wire:confirm="{{ __('Are you sure?') }}" wire:click="update" @disabled(!count(session('cart_items_for_dispatch', [])))  wire:loading.attr="disabled">

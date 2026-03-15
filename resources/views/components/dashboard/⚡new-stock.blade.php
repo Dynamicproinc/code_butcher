@@ -196,6 +196,32 @@ new class extends Component {
             'status' => $logMessage,
         ];
     }
+
+    public function increment($id){
+        $cart_items = session('cart_items', []);
+        if(isset($cart_items[$id])){
+            // dd( $cart_items[$id]['quantity']);
+            $cart_items[$id]['quantity'] =    $cart_items[$id]['quantity'] + 1;
+             session(['cart_items' => array_values($cart_items)]);
+        }
+        // foreach($cart_items as $key => $item){
+
+        // }
+    }
+    public function decrement($id){
+        $cart_items = session('cart_items', []);
+        if(isset($cart_items[$id])){
+            // dd( $cart_items[$id]['quantity']);
+            $cart_items[$id]['quantity'] =    $cart_items[$id]['quantity'] - 1;
+            if($cart_items[$id]['quantity'] <= 0){
+                 $cart_items[$id]['quantity'] = 1;
+            }
+             session(['cart_items' => array_values($cart_items)]);
+        }
+        // foreach($cart_items as $key => $item){
+
+        // }
+    }
 };
 ?>
 
@@ -227,7 +253,7 @@ new class extends Component {
                             <th scope="col">{{ __('DESC.') }}</th>
                             <th scope="col">{{ __('VA.') }}</th>
                             <th scope="col">{{ __('QUANTITY') }}</th>
-                            <th scope="col">{{ __('WEIGHT') }}</th>
+                            {{-- <th scope="col">{{ __('WEIGHT') }}</th> --}}
                             <th scope="col"></th>
 
                         </tr>
@@ -243,8 +269,10 @@ new class extends Component {
                                     <td>{{ $item['description'] }}</td>
                                     <td>{{ $item['variation'] }}</td>
                                     <td>{{ $item['quantity'] }}</td>
-                                    <td>{{ $item['weight'] }}</td>
+                                    {{-- <td>{{ $item['weight'] }}</td> --}}
                                     <td>
+                                        <button class="btn btn-sm btn-outline-primary" wire:click="decrement({{ $key }})">-</button>
+                                        <button class="btn btn-sm btn-outline-primary" wire:click="increment({{ $key }})">+</button>
                                         <button class="btn btn-sm btn-outline-danger"
                                             wire:click="removeItem('{{ $key }}')">{{ __('Remove') }}</button>
                                     </td>
@@ -267,8 +295,8 @@ new class extends Component {
             <div class="d-flex mb-3 justify-content-between align-items-center">
                 <div class=" sm-font">
                     {{ __('Total Items') }}: <strong>{{ count(session('cart_items', [])) }}</strong>
-                    {{ __('Total Weight') }}: <strong>{{ collect(session('cart_items', []))->sum('weight') }}
-                        kg</strong>
+                    {{-- {{ __('Total Weight') }}: <strong>{{ collect(session('cart_items', []))->sum('weight') }}
+                        kg</strong> --}}
                 </div>
                 <div class="">
                     <button class="btn btn-link" wire:click="clearCart" wire:confirm="Are you sure?"
