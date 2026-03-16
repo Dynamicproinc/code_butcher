@@ -72,6 +72,7 @@ Route::get('dashboard/new-stock',[HomeController::class, 'newStock'])->name('das
 Route::get('dashboard/local-inventory',[HomeController::class, 'localInventory'])->name('dashboard.local-inventory');
 Route::get('dashboard/product/add-product',[HomeController::class, 'addProduct'])->name('dashboard.product.add-product');
 Route::get('dashboard/dispatch-stock',[HomeController::class, 'dispatchStock'])->name('dashboard.product.dispatch-stcok');
+Route::get('dashboard/dispatch-stock-per-item',[HomeController::class, 'perOrderDispatch'])->name('dashboard.product.dispatch-per-item');
 Route::get('dashboard/logs',[HomeController::class, 'logs'])->name('dashboard.logs');
 
 Route::get('/abc123', function () {

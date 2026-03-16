@@ -20,8 +20,8 @@ new class extends Component {
         return [
             'product_name' => 'required|string|max:255',
             'product_code' => 'required|string|max:100|unique:products,product_code',
-            'price' => 'required|numeric|min:0',
-            'quantity' => 'required|integer|min:0',
+            // 'price' => 'required|numeric|min:0',
+            // 'quantity' => 'required|integer|min:0',
             'variation' => 'boolean',
             'threshold' => 'nullable|integer|min:0',
             'wc_product_id' => 'required|nullable|integer',
@@ -36,8 +36,8 @@ new class extends Component {
             'user_id' => auth()->user()->id,
             'product_name' => $this->product_name,
             'product_code' => $this->product_code,
-            'price' => $this->price,
-            'quantity' => $this->quantity,
+            'price' => 0,
+            'quantity' => 0,
             'variation' => $this->variation,
             'threshold' => $this->threshold,
             'wc_product_id' => $this->wc_product_id,
@@ -105,7 +105,7 @@ new class extends Component {
         <form wire:submit="save">
 
             <div class="mb-3">
-                <label>Product Name</label>
+                <label>{{__('Product name')}}</label>
                 <input type="text" wire:model="product_name" class="form-control border p-2">
                 @error('product_name')
                     <span class="text-danger">{{ $message }}</span>
@@ -113,31 +113,31 @@ new class extends Component {
             </div>
 
             <div class="mb-3">
-                <label>Product Code</label>
+                <label>{{__('Local product code')}}</label>
                 <input type="text" wire:model="product_code" class="form-control border p-2">
                 @error('product_code')
                     <span class="text-danger">{{ $message }}</span>
                 @enderror
             </div>
 
-            <div class="mb-3">
+            {{-- <div class="mb-3">
                 <label>Price</label>
                 <input type="number" step="0.01" wire:model="price" class="form-control border p-2">
                 @error('price')
                     <span class="text-danger">{{ $message }}</span>
                 @enderror
-            </div>
+            </div> --}}
 
-            <div class="mb-3">
+            {{-- <div class="mb-3">
                 <label>Quantity</label>
                 <input type="number" wire:model="quantity" class="form-control border p-2">
                 @error('quantity')
                     <span class="text-danger">{{ $message }}</span>
                 @enderror
-            </div>
+            </div> --}}
 
             <div class="mb-3">
-                <label>Threshold</label>
+                <label>{{__('Threshold (round by)')}}</label>
                 <input type="number" wire:model="threshold" class="form-control border p-2">
                 @error('threshold')
                     <span class="text-danger">{{ $message }}</span>
@@ -145,7 +145,7 @@ new class extends Component {
             </div>
 
             <div class="mb-3">
-                <label>WooCommerce Product ID</label>
+                <label>{{__('WC product ID')}}</label>
                 <input type="number" wire:model.lazy="wc_product_id" class="form-control border p-2">
                 @error('wc_product_id')
                     <span class="text-danger">{{ $message }}</span>

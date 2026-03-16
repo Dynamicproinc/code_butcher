@@ -9,11 +9,15 @@ use App\Models\ProductVariation;
 new class extends Component {
     public $barcode;
     public $error_message;
-      public $log = [];
+    public $log = [];
 
     public function addDispatchCart()
     {
         $this->error_message = '';
+
+        $this->validate([
+            'barcode' => 'required|digits:13',
+        ]);
         $barcode = new BarcodeService();
         $barcode_decode = $barcode->decodeBarcode($this->barcode);
         // get product details
@@ -66,31 +70,29 @@ new class extends Component {
             } else {
                 //if dont have variation product
 
-
-                 $citems = session()->get('cart_items_for_dispatch', []);
+                $citems = session()->get('cart_items_for_dispatch', []);
                 $found_item = false;
 
-                foreach($citems as $key => $item){
-                    if($item['code'] == $product_code){
-                         $citems[$key]['quantity'] += 1;
+                foreach ($citems as $key => $item) {
+                    if ($item['code'] == $product_code) {
+                        $citems[$key]['quantity'] += 1;
                         $citems[$key]['weight'] += $weight_in_kg;
                         $found_item = true;
                         break;
                     }
                 }
 
-                if(!$found_item){
-                     $citems[] = [
-                    'barcode' => $this->barcode,
-                    'code' => $product->product_code,
-                    'description' => $product->product_name,
-                    'variation' => $variation,
-                    'quantity' => 1,
-                    'weight' => $weight_in_kg,
-                ];
+                if (!$found_item) {
+                    $citems[] = [
+                        'barcode' => $this->barcode,
+                        'code' => $product->product_code,
+                        'description' => $product->product_name,
+                        'variation' => $variation,
+                        'quantity' => 1,
+                        'weight' => $weight_in_kg,
+                    ];
                 }
 
-               
                 session()->put('cart_items_for_dispatch', $citems);
             }
         } else {
@@ -109,36 +111,32 @@ new class extends Component {
         }
     }
 
-     public function update()
+    public function update()
     {
         $cart_items = session()->get('cart_items_for_dispatch', []);
         $wc = new WooCommerceService();
         foreach ($cart_items as $item) {
-            
             $product = Product::where('product_code', $item['code'])->first();
             if ($product) {
                 // check product has variation
                 if ($product->variation) {
-                    
                     $v = ProductVariation::where('wc_product_id', $product->wc_product_id)->where('variation_code', $item['variation'])->first();
 
                     if ($v) {
-                        
-                        
                         $wc->dispatchStock($v->wc_product_id, $v->wc_variation_id, $item['quantity']);
-                          $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update success.');
+                        $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update success.');
                         // $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update success.');
                     } else {
-                       $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update faild.');
+                        $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update faild.');
                     }
                 } else {
-                     $wc->dispatchStock($product->wc_product_id, null, $item['quantity']);
+                    $wc->dispatchStock($product->wc_product_id, null, $item['quantity']);
                     $product->quantity -= $item['quantity'];
                     $product->save();
-                     $this->writeLog("Product ID: {$item['code']} Variation ID: " . ($item['variation'] ?? 0) . " Update success.");
+                    $this->writeLog("Product ID: {$item['code']} Variation ID: " . ($item['variation'] ?? 0) . ' Update success.');
                 }
-            }else{
-                $this->writeLog("Product ID: {$item['code']} Variation ID: " . ($item['variation'] ?? 0) . " Update failed.");
+            } else {
+                $this->writeLog("Product ID: {$item['code']} Variation ID: " . ($item['variation'] ?? 0) . ' Update failed.');
             }
             session()->forget('cart_items_for_dispatch');
         }
@@ -158,38 +156,38 @@ new class extends Component {
         ];
     }
 
-     public function increment($id){
+    public function increment($id)
+    {
         $cart_items = session('cart_items_for_dispatch', []);
-        if(isset($cart_items[$id])){
+        if (isset($cart_items[$id])) {
             // dd( $cart_items[$id]['quantity']);
-            $cart_items[$id]['quantity'] =    $cart_items[$id]['quantity'] + 1;
-             session(['cart_items_for_dispatch' => array_values($cart_items)]);
+            $cart_items[$id]['quantity'] = $cart_items[$id]['quantity'] + 1;
+            session(['cart_items_for_dispatch' => array_values($cart_items)]);
         }
         // foreach($cart_items as $key => $item){
 
         // }
     }
-    public function decrement($id){
+    public function decrement($id)
+    {
         $cart_items = session('cart_items_for_dispatch', []);
-        if(isset($cart_items[$id])){
+        if (isset($cart_items[$id])) {
             // dd( $cart_items[$id]['quantity']);
-            $cart_items[$id]['quantity'] =    $cart_items[$id]['quantity'] - 1;
-            if($cart_items[$id]['quantity'] <= 0){
-                 $cart_items[$id]['quantity'] = 1;
+            $cart_items[$id]['quantity'] = $cart_items[$id]['quantity'] - 1;
+            if ($cart_items[$id]['quantity'] <= 0) {
+                $cart_items[$id]['quantity'] = 1;
             }
-             session(['cart_items_for_dispatch' => array_values($cart_items)]);
+            session(['cart_items_for_dispatch' => array_values($cart_items)]);
         }
         // foreach($cart_items as $key => $item){
 
         // }
     }
 
-    
     public function clearCart()
     {
         session()->forget('cart_items_for_dispatch');
     }
-      
 };
 ?>
 
@@ -198,11 +196,14 @@ new class extends Component {
 
         <div class="row">
             <div class="form-group mb-3 col-12">
-                <input type="text" class="form-control" placeholder="{{ __('Scan Barcode') }}"
-                    wire:model="barcode" wire:keydown.enter="addDispatchCart">
+                <input type="text" class="form-control mb-2" placeholder="{{ __('Scan Barcode') }}" wire:model="barcode"
+                    wire:keydown.enter="addDispatchCart">
                 @if ($error_message)
-                    <small class="text-danger">{{ $error_message }}</small>
+                    <small class="text-danger note">{{ $error_message }}</small>
                 @endif
+                @error('barcode')
+                    <small class="text-danger note">{{ $message }}</small>
+                @enderror
             </div>
             {{-- <div class="col-2">
                 <div class="spinner-border" role="status" wire:loading wire:target="addDispatchCart">
@@ -237,8 +238,10 @@ new class extends Component {
                                 <td>{{ $item['quantity'] }}</td>
                                 {{-- <td>{{ $item['weight'] }}</td> --}}
                                 <td>
-                                    <button class="btn btn-sm btn-outline-primary" wire:click="decrement({{ $key }})">-</button>
-                                        <button class="btn btn-sm btn-outline-primary" wire:click="increment({{ $key }})">+</button>
+                                    <button class="btn btn-sm btn-outline-primary"
+                                        wire:click="decrement({{ $key }})">-</button>
+                                    <button class="btn btn-sm btn-outline-primary"
+                                        wire:click="increment({{ $key }})">+</button>
                                     <button class="btn btn-sm btn-outline-danger"
                                         wire:click="removeItem('{{ $key }}')">{{ __('Remove') }}</button>
                                 </td>
@@ -271,15 +274,16 @@ new class extends Component {
             </div>
         </div>
         <div class="d-flex flex-row-reverse">
-            <button class="btn btn-primary"  wire:confirm="{{ __('Are you sure?') }}" wire:click="update" @disabled(!count(session('cart_items_for_dispatch', [])))  wire:loading.attr="disabled">
+            <button class="btn btn-primary" wire:confirm="{{ __('Are you sure?') }}" wire:click="update"
+                @disabled(!count(session('cart_items_for_dispatch', []))) wire:loading.attr="disabled">
                 {{-- <i class="bi bi-send-arrow-down-fill"></i> --}}
-                 <span class="spinner-border spinner-border-sm" role="status" wire:loading wire:target="update">
-                        {{-- <span class="visually-hidden">Loading...</span> --}}
-                    </span>
-                {{__('Dispatch')}}
+                <span class="spinner-border spinner-border-sm" role="status" wire:loading wire:target="update">
+                    {{-- <span class="visually-hidden">Loading...</span> --}}
+                </span>
+                {{ __('Dispatch') }}
             </button>
         </div>
-         <div class="log-box">
+        <div class="log-box">
             @if (count($log))
                 <h6>Log</h6>
                 @foreach ($log as $item)

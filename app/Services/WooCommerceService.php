@@ -53,7 +53,7 @@ class WooCommerceService
         }
         $type = "IN";
         // update stock transactions
-        $st = StockTransaction::addTransaction($productId, $variationId ?? 0,$product['name'],$product['stock_quantity'],$stock, $wc_update_stock, $type );
+        $st = StockTransaction::addTransaction($productId, $variationId ?? 0,$product['name'],$product['stock_quantity'] ?? 0,$stock, $wc_update_stock, $type );
 
 
        
@@ -105,7 +105,7 @@ class WooCommerceService
         }
      $type = "OUT";
         // update stock transactions
-        $st = StockTransaction::addTransaction($productId, $variationId ?? 0,$product['name'],$product['stock_quantity'],-$stock, $wc_update_stock, $type );
+        $st = StockTransaction::addTransaction($productId, $variationId ?? 0,$product['name'],$product['stock_quantity'] ?? 0,-$stock, $wc_update_stock, $type );
 
 
        

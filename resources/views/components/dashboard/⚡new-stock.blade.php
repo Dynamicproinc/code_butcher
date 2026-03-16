@@ -27,6 +27,10 @@ new class extends Component {
         // $last_number = floor($last_number / $threshold) * $threshold;
         // dd($last_number);
 
+        $this->validate([
+    'barcode' => 'required|digits:13'
+]);
+
         $product_code = substr($this->barcode, 4, 3);
         $weight = substr($this->barcode, 7, 5);
         $weight_in_kg = intval($weight) / 1000;
@@ -232,11 +236,14 @@ new class extends Component {
                 <div class="mb-3">
 
                     <div class="form-group mb-3">
-                        <input type="text" class="form-control" placeholder="Enter barcode here..." wire:model="barcode"
+                        <input type="text" class="form-control mb-2" placeholder="Enter barcode here..." wire:model="barcode"
                             wire:keydown.enter="addItem">
                         @if ($error_message)
-                            <small class="text-danger">{{ $error_message }}</small>
+                            <small class="text-danger note">{{ $error_message }}</small>
                         @endif
+                        @error('barcode')
+                           <small class="text-danger note">{{ $message }}</small>
+                        @enderror
                     </div>
 
 

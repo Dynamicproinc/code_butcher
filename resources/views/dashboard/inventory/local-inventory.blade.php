@@ -19,7 +19,7 @@
             <tbody>
 
                 @foreach ($products as $product)
-                    @if (isset($product->variations))
+                    @if (count($product->variations))
                         @foreach ($product->variations as $key => $variation)
                             <tr>
 
@@ -30,7 +30,7 @@
                                     </td>
 
                                     <td rowspan="{{ count($product->variations) }}">
-                                        {{ $product->id }} | <small class="text-muted"> WC PID: {{ $product->wc_product_id}}</small>
+                                        {{ $product->product_code }} | <small class="text-muted"> WC PID: {{ $product->wc_product_id}}</small>
                                     </td>
                                 @endif
 
@@ -50,8 +50,8 @@
                         @endforeach
                     @else
                         <tr>
-                            <td class="fw-bold text-primary">{{ $product['name'] }}</td>
-                            <td>{{ $product['id'] }}</td>
+                            <td class="fw-bold text-primary">{{ $product->product_name }}</td>
+                            <td>{{ $product['id'] }} | <small class="text-muted"> WC PID: {{ $product->wc_product_id}}</small></td>
                             <td colspan="3" class="text-muted text-center">
                                 No Variations
                             </td>

@@ -96,5 +96,9 @@ class HomeController extends Controller
         return view('dashboard.log', compact('logs'));
     }
 
+    public function perOrderDispatch(){
+        return view('dashboard.inventory.dispatch-per-item');
+    }
+
 
 }
