@@ -15,7 +15,7 @@
 
         body {
             /* letter-spacing: 1px; */
-            font-size:14px;
+            font-size: 14px;
         }
 
         .log-box {
@@ -224,25 +224,30 @@
             background: #eee;
             padding: 16px
         }
-        .nav-item{
+
+        .nav-item {
             font-size: 11px;
             letter-spacing: 2px;
             text-transform: uppercase;
             font-weight: 500;
         }
-        svg{
+
+        svg {
             width: 16px;
             height: 16px;
         }
-        .tbl-red{
+
+        .tbl-red {
             background: rgba(147, 10, 10, 0.049);
-            color:  rgb(147, 10, 10)
+            color: rgb(147, 10, 10)
         }
-        .tbl-green{
-            background: rgb(7, 76, 23,  0.049);
-             color: rgb(7, 76, 23);
+
+        .tbl-green {
+            background: rgb(7, 76, 23, 0.049);
+            color: rgb(7, 76, 23);
         }
-        label{
+
+        label {
             font-size: 12px;
             text-transform: uppercase;
             color: #555;
@@ -250,21 +255,22 @@
             letter-spacing: 2px;
         }
 
-       .btn, button{
-             font-size: 12px;
+        .btn,
+        button {
+            font-size: 12px;
             text-transform: uppercase !important;
-            
+
             font-weight: 500;
             letter-spacing: 2px;
         }
-        .note{
+
+        .note {
             margin-top: 8px;
             padding: 4px 8px;
             border-radius: 4px;
             background: rgba(128, 0, 0, 0.104);
             color: maroon
         }
-
     </style>
 </head>
 
@@ -287,7 +293,7 @@
             <div class="dropdown">
                 <button class="btn btn-secondary dropdown-toggle text-capitalize" type="button" id="dropdownMenuButton"
                     data-toggle="dropdown" aria-expanded="false">
-                    Hello, {{auth()->user()->name}}
+                    Hello, {{ auth()->user()->name }}
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <li><a class="dropdown-item" href="#">Settings</a></li>
@@ -304,19 +310,34 @@
                     <ul class="nav flex-column">
 
                         <li class="nav-item">
-                            <a class="nav-link @if (Route::currentRouteName() == 'dashboard.inventory') active @endif" href="{{ route('dashboard.inventory') }}">
+                            <a class="nav-link @if (Route::currentRouteName() == 'dashboard.inventory') active @endif"
+                                href="{{ route('dashboard.inventory') }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                    fill="currentColor" class="bi bi-badge-wc" viewBox="0 0 16 16">
+                                    <path
+                                        d="M10.348 7.643c0-1.112.488-1.754 1.318-1.754.682 0 1.139.47 1.187 1.108H14v-.11c-.053-1.187-1.024-2-2.342-2-1.604 0-2.518 1.05-2.518 2.751v.747c0 1.7.905 2.73 2.518 2.73 1.314 0 2.285-.792 2.342-1.939v-.114h-1.147c-.048.615-.497 1.05-1.187 1.05-.839 0-1.318-.62-1.318-1.727zM4.457 11l1.02-4.184h.045L6.542 11h1.006L9 5.001H7.818l-.82 4.355h-.056L5.97 5.001h-.94l-.972 4.355h-.053l-.827-4.355H2L3.452 11z" />
+                                    <path
+                                        d="M14 3a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z" />
+                                </svg>
+                                <span class="ml-2">WC Inventory</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @if (Route::currentRouteName() == 'dashboard.local-inventory') active @endif"
+                                href="{{ route('dashboard.local-inventory') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                     stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
                                     <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
                                     <polyline points="13 2 13 9 20 9"></polyline>
                                 </svg>
-                                <span class="ml-2">Inventory</span>
+                                <span class="ml-2">Local Products</span>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link @if (Route::currentRouteName() == 'dashboard.new-stock') active @endif" href="{{ route('dashboard.new-stock') }}">
+                            <a class="nav-link @if (Route::currentRouteName() == 'dashboard.new-stock') active @endif"
+                                href="{{ route('dashboard.new-stock') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                     fill="currentColor" class="bi bi-box-arrow-in-down" viewBox="0 0 16 16">
                                     <path fill-rule="evenodd"
@@ -329,7 +350,8 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link @if (Route::currentRouteName() == 'dashboard.product.dispatch-stcok') active @endif" href="{{ route('dashboard.product.dispatch-stcok') }}">
+                            <a class="nav-link @if (Route::currentRouteName() == 'dashboard.product.dispatch-stcok') active @endif"
+                                href="{{ route('dashboard.product.dispatch-stcok') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                     fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
                                     <path fill-rule="evenodd"
@@ -341,7 +363,8 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @if (Route::currentRouteName() == 'dashboard.product.dispatch-per-item') active @endif" href="{{ route('dashboard.product.dispatch-per-item') }}">
+                            <a class="nav-link @if (Route::currentRouteName() == 'dashboard.product.dispatch-per-item') active @endif"
+                                href="{{ route('dashboard.product.dispatch-per-item') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                     fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
                                     <path fill-rule="evenodd"
@@ -353,7 +376,8 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @if (Route::currentRouteName() == 'dashboard.product.add-product') active @endif" href="{{ route('dashboard.product.add-product') }}">
+                            <a class="nav-link @if (Route::currentRouteName() == 'dashboard.product.add-product') active @endif"
+                                href="{{ route('dashboard.product.add-product') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                     stroke-linecap="round" stroke-linejoin="round" class="feather feather-layers">
@@ -361,11 +385,12 @@
                                     <polyline points="2 17 12 22 22 17"></polyline>
                                     <polyline points="2 12 12 17 22 12"></polyline>
                                 </svg>
-                                <span class="ml-2">{{__('Add Product')}}</span>
+                                <span class="ml-2">{{ __('Add Product') }}</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @if (Route::currentRouteName() == 'dashboard.logs') active @endif" href="{{route('dashboard.logs')}}">
+                            <a class="nav-link @if (Route::currentRouteName() == 'dashboard.logs') active @endif"
+                                href="{{ route('dashboard.logs') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                     fill="currentColor" class="bi bi-folder" viewBox="0 0 16 16">
                                     <path
