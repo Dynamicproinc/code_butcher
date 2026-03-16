@@ -164,6 +164,8 @@ new class extends Component {
             }else{
                 $this->writeLog("Product ID: {$item['code']} Variation ID: " . ($item['variation'] ?? 0) . " Update failed.");
             }
+
+           
         }
         session()->forget('cart_items');
         
