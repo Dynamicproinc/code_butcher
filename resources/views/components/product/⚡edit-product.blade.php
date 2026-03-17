@@ -82,7 +82,9 @@ new class extends Component
 ?>
 
 <div>
-    <div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div>
         <form wire:submit="update">
 
             <div class="mb-3">
@@ -125,39 +127,7 @@ new class extends Component
                     </span> loading...
                 </div>
 
-                {{-- <div class="py-3">
-                    @if ($product_variations)
-                        <table border="1" class="table">
-                            <tr>
-                                <th>WC Id</th>
-                                <th>Attr</th>
-                                <th>Local Code</th>
-                                <th>Quantity</th>
-                            </tr>
-
-                            @foreach ($product_variations as $index => $variation)
-                                <tr>
-                                    <td>{{ $variation['id'] ?? 'N/A' }}</td>
-                                    <td>{{ $variation['name'] ?? 'N/A' }}</td>
-                                    <td>
-                                        <input type="text"
-                                            wire:model="product_variations.{{ $index }}.local_code" required>
-                                    </td>
-                                    <td>{{ $variation['stock_quantity'] }}</td>
-                                </tr>
-                            @endforeach
-
-
-                        </table>
-                    @endif
-                </div> --}}
-                {{-- @if ($product_variations)
-                    <ul>
-                        @foreach ($product_variations as $variation)
-                            <li>{{ $variation['name'] ?? 'N/A' }} - ${{ $variation['price'] ?? '0' }}</li>
-                        @endforeach
-                    </ul>
-                @endif --}}
+                
             </div>
             <div class="mb-3">
                 <label class="flex items-center">
@@ -178,6 +148,9 @@ new class extends Component
         </form>
 
     </div>
+        </div>
+    </div>
+    
     <div>
         <div class="p-3 bg-light">
             <form wire:submit="addVariation" wire:confirm="{{__('Are you sure?')}}">

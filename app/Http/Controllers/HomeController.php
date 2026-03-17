@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use App\Models\Product;
 use App\Models\StockTransaction;
+use App\Services\WooCommerceService;
+
 class HomeController extends Controller
 {
     /**
@@ -39,8 +41,23 @@ class HomeController extends Controller
     )->get(config('services.woocommerce.url') . '/wp-json/wc/v3/products', [
         'per_page' => 20,
         'page' => $page,
-         'status' => 'publish'
+         'status' => 'publish',
+         
     ]);
+
+    // $response
+    // $wc = new WooCommerceService;
+
+    //  $response = $wc->get(
+    //         "/wp-json/wc/v3/products",
+    //         [
+    //             'query' => [
+    //                 'per_page' => 20,
+    //     'page' => $page,
+    //      'status' => 'publish'
+    //             ]
+    //         ]
+    //     );
 
     if ($response->failed()) {
         dd($response->body());
