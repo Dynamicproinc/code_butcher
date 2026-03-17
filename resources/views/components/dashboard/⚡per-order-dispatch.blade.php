@@ -10,17 +10,18 @@ use App\Models\ProductVariation;
 new class extends Component {
     public $stock_transactions;
     public $barcode;
-    public $error_message, $success_message;
+    public $error_message = '',
+        $success_message = '';
 
     public function mount()
     {
-        $this->stock_transactions = StockTransaction::latest()->where('type', 'OUT')->limit(20)->get();
+        $this->stock_transactions = StockTransaction::latest()->where('type', 'OUT')->whereDate('created_at', today())->limit(20)->get();
     }
 
     public function add()
     {
-        $this->error_message = null;
-        $this->success_message = null;
+        $this->error_message = '';
+        $this->success_message = '';
         $this->validate([
             'barcode' => 'required|digits:13',
         ]);
@@ -47,7 +48,7 @@ new class extends Component {
                 $v = ProductVariation::where('wc_product_id', $product->wc_product_id)->where('variation_code', $variation)->first();
                 if ($v) {
                     $wc->dispatchStock($v->wc_product_id, $v->wc_variation_id, $quantity_per_item);
-                    // $this->success_message = __('Item quantity updated succesfully');
+                    $this->success_message = __('Item quantity updated succesfully');
                     // $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update success.');
                     // $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update success.');
                 } else {
@@ -56,6 +57,7 @@ new class extends Component {
                 }
             } else {
                 $wc->dispatchStock($product->wc_product_id, null, $quantity_per_item);
+                $this->success_message = __('Item quantity updated succesfully');
             }
         } else {
             $this->error_message = __('Invalid barcode');
@@ -63,7 +65,7 @@ new class extends Component {
 
         $this->barcode = '';
         // end logic
-         $this->stock_transactions = StockTransaction::latest()->where('type', 'OUT')->limit(20)->get();
+        $this->stock_transactions = StockTransaction::latest()->where('type', 'OUT')->whereDate('created_at', today())->limit(20)->get();
     }
 };
 ?>
@@ -72,26 +74,31 @@ new class extends Component {
     <div class="">
         <div class="">
             <div class="mb-3">
-                <input type="text" wire:model="barcode" class="form-control"
+                <input type="text" wire:model="barcode" class="form-control mb-2"
                     placeholder="{{ __('Scan barcode here...') }}" wire:keydown.enter="add">
+
             </div>
             <div style="height:40px">
-                <div class="d-flex">
+                <div class="">
                     <div>
-                       <div wire:loading wire:target="add">
-                         <span class="spinner-grow spinner-grow-sm mx-3" role="status">
-                            {{-- <span class="visually-hidden">Loading...</span> --}}
-                        </span> 
-                        Updating...
-                       </div>
+                        <div wire:loading wire:target="add" class="w-100">
+                            {{-- <span class="spinner-grow spinner-grow-sm mx-3" role="status">
+                               
+                            </span> --}}
+                            {{-- Updating... --}}
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                                    aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                                    Updating...</div>
+                            </div>
+                        </div>
                     </div>
                     <div>
                         @if ($success_message)
                             <span class="badge bg-success"> {{ $success_message }}</span>
-                            
                         @endif
                         @if ($error_message)
-                            <span class="badge bg-danger"> {{ $error_messagge }}</span>
+                            <span class="badge bg-danger"> {{ $error_message }}</span>
                         @endif
 
                         @error('barcode')

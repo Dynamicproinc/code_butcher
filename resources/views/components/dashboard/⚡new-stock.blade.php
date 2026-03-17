@@ -53,6 +53,12 @@ new class extends Component {
 
             if ($product->variation) {
                 $variation = $weight - ($weight % $product->threshold);
+                $check_vari = ProductVariation::where('product_id', $product->id)->where('variation_code', $variation)->first();
+                if(!$check_vari){
+
+                    $this->error_message = 'Variation code: '.$variation.' , not registered';
+                    return null;
+                }
                 $cartItems = session()->get('cart_items', []);
 
                 $found = false;
@@ -153,6 +159,7 @@ new class extends Component {
                         $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update success.');
                     } else {
                         $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update faild.');
+                        
                     }
                 } else {
 

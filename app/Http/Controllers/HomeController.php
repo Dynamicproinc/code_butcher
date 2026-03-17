@@ -100,5 +100,12 @@ class HomeController extends Controller
         return view('dashboard.inventory.dispatch-per-item');
     }
 
+    public function showProduct($id){
+
+        $product = Product::findOrFail($id);
+
+        return view('dashboard.inventory.show-product', compact(['product']));
+    }
+
 
 }

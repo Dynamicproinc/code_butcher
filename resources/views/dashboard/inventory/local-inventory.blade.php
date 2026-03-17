@@ -26,7 +26,7 @@
                                 {{-- Show product name only on first variation row --}}
                                 @if ($key == 0)
                                     <td rowspan="{{ count($product->variations) }}" class="fw-bold text-primary">
-                                        {{ $product->product_name }}
+                                      <a href="{{ route('dashboard.product.show-product', $product->id) }}">{{ $product->product_name }}</a>
                                     </td>
 
                                     <td rowspan="{{ count($product->variations) }}">
@@ -61,6 +61,9 @@
 
             </tbody>
         </table>
+        <div class="mt-3">
+            {{$products->links()}}
+        </div>
     </div>
 </div>
 @endsection

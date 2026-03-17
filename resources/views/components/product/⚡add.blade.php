@@ -14,6 +14,7 @@ new class extends Component {
     public $threshold;
     public $wc_product_id;
     public $product_variations = [];
+    public $wc_product;
 
     protected function rules()
     {
@@ -64,36 +65,35 @@ new class extends Component {
 
     public function updatedWcProductId()
     {
-       if($this->wc_product_id){
-         $wc = new WooCommerceService();
+        if ($this->wc_product_id) {
+            $wc = new WooCommerceService();
+            $this->wc_product = $wc->getProductName($this->wc_product_id);
 
-        $response = $wc->getVariation($this->wc_product_id); // Guzzle Response
-        $json = $response->getBody()->getContents(); // Get raw JSON string
+            $response = $wc->getVariation($this->wc_product_id); // Guzzle Response
+            $json = $response->getBody()->getContents(); // Get raw JSON string
 
-        $this->product_variations = json_decode($json, true) ?? [];
-       }else{
-         $this->product_variations = null;
-       }
+            $this->product_variations = json_decode($json, true) ?? [];
+        } else {
+            $this->product_variations = null;
+        }
     }
 
     // public function updatedProductCode()
     // {
-        
+
     //     $wc = new WooCommerceService();
     //     $product = Product::where('product_code', $this->product_code)->first();
     //     if($product){
-    //         $response = $wc->getVariation($product->wc_product_id); 
-    //     $json = $response->getBody()->getContents(); 
+    //         $response = $wc->getVariation($product->wc_product_id);
+    //     $json = $response->getBody()->getContents();
 
     //     $this->product_variations = json_decode($json, true) ?? [];
     //     $this->validate([
     //        'product_code' => 'unique:products,product_code',
     //     ]);
     //     }
-        
+
     // }
-
-
 };
 ?>
 
@@ -105,7 +105,7 @@ new class extends Component {
         <form wire:submit="save">
 
             <div class="mb-3">
-                <label>{{__('Product name')}}</label>
+                <label>{{ __('Product name') }}</label>
                 <input type="text" wire:model="product_name" class="form-control border p-2">
                 @error('product_name')
                     <span class="text-danger">{{ $message }}</span>
@@ -113,7 +113,8 @@ new class extends Component {
             </div>
 
             <div class="mb-3">
-                <label>{{__('Local product code')}}</label>
+                <label>{{ __('Local product code') }}</label>
+                <small class="text-muted">{{__('(Must be same as barcode)')}}</small>
                 <input type="text" wire:model="product_code" class="form-control border p-2">
                 @error('product_code')
                     <span class="text-danger">{{ $message }}</span>
@@ -137,7 +138,7 @@ new class extends Component {
             </div> --}}
 
             <div class="mb-3">
-                <label>{{__('Threshold (round by)')}}</label>
+                <label>{{ __('Threshold (round by)') }}</label>
                 <input type="number" wire:model="threshold" class="form-control border p-2">
                 @error('threshold')
                     <span class="text-danger">{{ $message }}</span>
@@ -145,7 +146,7 @@ new class extends Component {
             </div>
 
             <div class="mb-3">
-                <label>{{__('WC product ID')}}</label>
+                <label>{{ __('WC product ID') }}</label>
                 <input type="number" wire:model.lazy="wc_product_id" class="form-control border p-2">
                 @error('wc_product_id')
                     <span class="text-danger">{{ $message }}</span>
@@ -158,31 +159,45 @@ new class extends Component {
                     </span> loading...
                 </div>
 
-                <div class="py-3">
-                    @if ($product_variations)
-                        <table border="1" class="table">
-                            <tr>
-                                <th>WC Id</th>
-                                <th>Attr</th>
-                                <th>Local Code</th>
-                                <th>Quantity</th>
-                            </tr>
+                <div class="mb-2">
+                     @if ($product_variations)
+                    <div class="card">
+                        <h5 class="card-header">
+                            @if ($wc_product)
+                                {{ $wc_product }}
+                            @endif
+                        </h5>
+                        <div class="card-body">
 
-                            @foreach ($product_variations as $index => $variation)
-                                <tr>
-                                    <td>{{ $variation['id'] ?? 'N/A' }}</td>
-                                    <td>{{ $variation['name'] ?? 'N/A' }}</td>
-                                    <td>
-                                        <input type="text"
-                                            wire:model="product_variations.{{ $index }}.local_code" required>
-                                    </td>
-                                    <td>{{ $variation['stock_quantity'] }}</td>
-                                </tr>
-                            @endforeach
+                           
+                                <table border="1" class="table">
+                                    <tr>
+                                        <th>WC Id</th>
+                                        <th>Attr</th>
+                                        <th>Local Code</th>
+                                        <th>Quantity</th>
+                                    </tr>
+
+                                    @foreach ($product_variations as $index => $variation)
+                                        <tr>
+                                            <td>{{ $variation['id'] ?? 'N/A' }}</td>
+                                            <td>{{ $variation['name'] ?? 'N/A' }}</td>
+                                            <td>
+                                                <input type="text"
+                                                    wire:model="product_variations.{{ $index }}.local_code"
+                                                    required>
+                                            </td>
+                                            <td>{{ $variation['stock_quantity'] }}</td>
+                                        </tr>
+                                    @endforeach
 
 
-                        </table>
-                    @endif
+                                </table>
+                           
+                        </div>
+                    </div>
+                     @endif
+
                 </div>
                 {{-- @if ($product_variations)
                     <ul>

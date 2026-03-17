@@ -138,6 +138,25 @@ class WooCommerceService
         $variation_data = json_decode($variation->getBody(), true);
         return $variation_data['stock_quantity'];
     }
+    public function getProductName($product_id)
+{
+    try {
+        $response = $this->client->get("/wp-json/wc/v3/products/$product_id");
+        $product_data = json_decode($response->getBody(), true);
+
+        return $product_data['name'] ?? null; // Return null if 'name' doesn't exist
+    } catch (\GuzzleHttp\Exception\ClientException $e) {
+        // Check if it's a 404
+        if ($e->getResponse()->getStatusCode() == 404) {
+            return null; // or return "Product not found"
+        }
+        // Re-throw other client exceptions
+        throw $e;
+    } catch (\Exception $e) {
+        // Handle other exceptions (optional)
+        return null;
+    }
+}
 
 
     

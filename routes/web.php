@@ -74,6 +74,7 @@ Route::get('dashboard/product/add-product',[HomeController::class, 'addProduct']
 Route::get('dashboard/dispatch-stock',[HomeController::class, 'dispatchStock'])->name('dashboard.product.dispatch-stcok');
 Route::get('dashboard/dispatch-stock-per-item',[HomeController::class, 'perOrderDispatch'])->name('dashboard.product.dispatch-per-item');
 Route::get('dashboard/logs',[HomeController::class, 'logs'])->name('dashboard.logs');
+Route::get('dashboard/product/{id}',[HomeController::class, 'showProduct'])->name('dashboard.product.show-product');
 
 Route::get('/abc123', function () {
     Artisan::call('migrate', ['--force' => true]);
