@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\Customer;
 use GuzzleHttp\Client;
 use App\Services\WooCommerceService;
+use App\Services\BarcodeService;
+
 
 new class extends Component {
     public $barcode;
@@ -20,20 +22,33 @@ new class extends Component {
     public $customer_id;
     public $customers = [];
     public $log = [];
+    public $client_message;
 
     public function addItem()
     {
+
+    //    $this->dispatch('showMessage', data: ['type' =>'success', 'message'=> 'Successfully added']);
+
+         
         // $threshold = 20;
         // $last_number = floor($last_number / $threshold) * $threshold;
         // dd($last_number);
 
         $this->validate([
-    'barcode' => 'required|digits:13'
-]);
+            'barcode' => 'required|digits:13',
+        ]);
 
-        $product_code = substr($this->barcode, 4, 3);
-        $weight = substr($this->barcode, 7, 5);
-        $weight_in_kg = intval($weight) / 1000;
+        $barcode = new BarcodeService();
+        $barcode_decode = $barcode->decodeBarcode($this->barcode);
+        // get product details
+
+        $product_code = $barcode_decode['product_code'];
+        $weight_in_kg = $barcode_decode['weight_in_kg'];
+        $weight = $barcode_decode['weight'];
+
+        // $product_code = substr($this->barcode, 4, 3);
+        // $weight = substr($this->barcode, 7, 5);
+        // $weight_in_kg = intval($weight) / 1000;
         // dd($weight_in_kg);
 
         if ($product = Product::where('product_code', $product_code)->first()) {
@@ -54,9 +69,8 @@ new class extends Component {
             if ($product->variation) {
                 $variation = $weight - ($weight % $product->threshold);
                 $check_vari = ProductVariation::where('product_id', $product->id)->where('variation_code', $variation)->first();
-                if(!$check_vari){
-
-                    $this->error_message = 'Variation code: '.$variation.' , not registered';
+                if (!$check_vari) {
+                    $this->error_message = 'Variation code: ' . $variation . ' , not registered';
                     return null;
                 }
                 $cartItems = session()->get('cart_items', []);
@@ -84,31 +98,33 @@ new class extends Component {
                 }
 
                 session()->put('cart_items', $cartItems);
+
+                // $this->dispatch('showMessage', data: ['type' =>'success', 'message'=> 'Successfully added']);
+               
             } else {
-                 $citems = session()->get('cart_items', []);
+                $citems = session()->get('cart_items', []);
                 $found_item = false;
 
-                foreach($citems as $key => $item){
-                    if($item['code'] == $product_code){
-                         $citems[$key]['quantity'] += 1;
+                foreach ($citems as $key => $item) {
+                    if ($item['code'] == $product_code) {
+                        $citems[$key]['quantity'] += 1;
                         $citems[$key]['weight'] += $weight_in_kg;
                         $found_item = true;
                         break;
                     }
                 }
 
-                if(!$found_item){
-                     $citems[] = [
-                    'barcode' => $this->barcode,
-                    'code' => $product->product_code,
-                    'description' => $product->product_name,
-                    'variation' => $variation,
-                    'quantity' => 1,
-                    'weight' => $weight_in_kg,
-                ];
+                if (!$found_item) {
+                    $citems[] = [
+                        'barcode' => $this->barcode,
+                        'code' => $product->product_code,
+                        'description' => $product->product_name,
+                        'variation' => $variation,
+                        'quantity' => 1,
+                        'weight' => $weight_in_kg,
+                    ];
                 }
 
-               
                 session()->put('cart_items', $citems);
             }
             // if product has variations
@@ -135,8 +151,9 @@ new class extends Component {
 
     public function update()
     {
-        $cart_items = session()->get('cart_items', []);
-         $wc = new WooCommerceService();
+        try {
+             $cart_items = session()->get('cart_items', []);
+        $wc = new WooCommerceService();
         foreach ($cart_items as $item) {
             // dd($item['code']);
             // find the prpoduct
@@ -154,28 +171,30 @@ new class extends Component {
 
                         // updating quantites in wc
                         // $this->updateWc($v->wc_product_id, $v->wc_variation_id, $v->quantity);
-                       
+
                         $wc->updateStock($v->wc_product_id, $v->wc_variation_id, $item['quantity']);
                         $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update success.');
                     } else {
                         $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update faild.');
-                        
                     }
                 } else {
-
                     $wc->updateStock($product->wc_product_id, null, $item['quantity']);
                     $product->quantity += $item['quantity'];
                     $product->save();
-                     $this->writeLog("Product ID: {$item['code']} Variation ID: " . ($item['variation'] ?? 0) . " Update success.");
+                    $this->writeLog("Product ID: {$item['code']} Variation ID: " . ($item['variation'] ?? 0) . ' Update success.');
                 }
-            }else{
-                $this->writeLog("Product ID: {$item['code']} Variation ID: " . ($item['variation'] ?? 0) . " Update failed.");
+            } else {
+                $this->writeLog("Product ID: {$item['code']} Variation ID: " . ($item['variation'] ?? 0) . ' Update failed.');
             }
-
-           
         }
         session()->forget('cart_items');
-        
+        } catch (\Throwable $th) {
+
+            // $this->client_message = $th->getMessage();
+            $this->client_message = 'The process could not be completed due to an issue connecting to the WooCommerce server.';
+         
+        }
+       
     }
 
     public function updateWc($product_id, $variation_id, $quantity)
@@ -210,26 +229,28 @@ new class extends Component {
         ];
     }
 
-    public function increment($id){
+    public function increment($id)
+    {
         $cart_items = session('cart_items', []);
-        if(isset($cart_items[$id])){
+        if (isset($cart_items[$id])) {
             // dd( $cart_items[$id]['quantity']);
-            $cart_items[$id]['quantity'] =    $cart_items[$id]['quantity'] + 1;
-             session(['cart_items' => array_values($cart_items)]);
+            $cart_items[$id]['quantity'] = $cart_items[$id]['quantity'] + 1;
+            session(['cart_items' => array_values($cart_items)]);
         }
         // foreach($cart_items as $key => $item){
 
         // }
     }
-    public function decrement($id){
+    public function decrement($id)
+    {
         $cart_items = session('cart_items', []);
-        if(isset($cart_items[$id])){
+        if (isset($cart_items[$id])) {
             // dd( $cart_items[$id]['quantity']);
-            $cart_items[$id]['quantity'] =    $cart_items[$id]['quantity'] - 1;
-            if($cart_items[$id]['quantity'] <= 0){
-                 $cart_items[$id]['quantity'] = 1;
+            $cart_items[$id]['quantity'] = $cart_items[$id]['quantity'] - 1;
+            if ($cart_items[$id]['quantity'] <= 0) {
+                $cart_items[$id]['quantity'] = 1;
             }
-             session(['cart_items' => array_values($cart_items)]);
+            session(['cart_items' => array_values($cart_items)]);
         }
         // foreach($cart_items as $key => $item){
 
@@ -245,13 +266,13 @@ new class extends Component {
                 <div class="mb-3">
 
                     <div class="form-group mb-3">
-                        <input type="text" class="form-control mb-2" placeholder="Enter barcode here..." wire:model="barcode"
-                            wire:keydown.enter="addItem">
+                        <input type="text" class="form-control mb-2" placeholder="Enter barcode here..."
+                            wire:model="barcode" wire:keydown.enter="addItem">
                         @if ($error_message)
                             <small class="text-danger note">{{ $error_message }}</small>
                         @endif
                         @error('barcode')
-                           <small class="text-danger note">{{ $message }}</small>
+                            <small class="text-danger note">{{ $message }}</small>
                         @enderror
                     </div>
 
@@ -260,6 +281,7 @@ new class extends Component {
             </div>
         </div>
         <div>
+          
             <div class="cart-table mb-3">
                 <table class="table table-sm table-striped table-responsive c-table">
                     <thead>
@@ -287,8 +309,10 @@ new class extends Component {
                                     <td>{{ $item['quantity'] }}</td>
                                     {{-- <td>{{ $item['weight'] }}</td> --}}
                                     <td>
-                                        <button class="btn btn-sm btn-outline-primary" wire:click="decrement({{ $key }})">-</button>
-                                        <button class="btn btn-sm btn-outline-primary" wire:click="increment({{ $key }})">+</button>
+                                        <button class="btn btn-sm btn-outline-primary"
+                                            wire:click="decrement({{ $key }})">-</button>
+                                        <button class="btn btn-sm btn-outline-primary"
+                                            wire:click="increment({{ $key }})">+</button>
                                         <button class="btn btn-sm btn-outline-danger"
                                             wire:click="removeItem('{{ $key }}')">{{ __('Remove') }}</button>
                                     </td>
@@ -333,6 +357,20 @@ new class extends Component {
                     </span>
                     {{ __('Add To Stock') }}
                 </button>
+            </div>
+        </div>
+        <div>
+            <div class="progress w-100" wire:loading.flex wire:target="update">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                    aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">Updating...</div>
+            </div>
+            <div class="log-box text-danger">
+                @if($client_message)
+                <div class="simple-alert-danger">
+
+                    {{$client_message}}
+                </div>
+                @endif
             </div>
         </div>
         <div class="log-box">

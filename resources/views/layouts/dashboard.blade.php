@@ -271,8 +271,35 @@
             background: rgba(128, 0, 0, 0.104);
             color: maroon
         }
-        .form-control{
+
+        .form-control {
             /* background: #fafafa; */
+        }
+        .simple-alert-danger{
+            padding: 8px 16px;
+            border-left: 2px solid rgb(187, 33, 36);
+            color: rgb(187, 33, 36);
+            background: rgba(187, 33, 35, 0.031);
+        }
+
+        .noti-bar{
+            /* height: 100px; */
+            width: 200px;
+            border-radius: 16px;
+            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+            padding: 12px 16px;
+        }
+        .noti-success{
+            background: #E3FEDF;
+            border: 1px solid #3a872f;
+            color: #3a872f;
+        }
+        .top-alert-bar{
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
         }
     </style>
 </head>
@@ -381,12 +408,12 @@
                         <li class="nav-item">
                             <a class="nav-link @if (Route::currentRouteName() == 'dashboard.product.add-product') active @endif"
                                 href="{{ route('dashboard.product.add-product') }}">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round" class="feather feather-layers">
-                                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                                    <polyline points="2 17 12 22 22 17"></polyline>
-                                    <polyline points="2 12 12 17 22 12"></polyline>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                    fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+                                    <path
+                                        d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                                    <path
+                                        d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
                                 </svg>
                                 <span class="ml-2">{{ __('Add Product') }}</span>
                             </a>
@@ -406,7 +433,9 @@
                     </ul>
                 </div>
             </nav>
+            
             <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4 py-4">
+                  {{-- @livewire('inc.message') --}}
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="#">Home</a></li>
@@ -416,6 +445,8 @@
                 <div class="py-3">
                     <h1 class="h5 sub-title">@yield('title')</h1>
                 </div>
+                {{--  --}}
+              
                 {{--  --}}
                 <div class="mt-3">
                     @yield('content')

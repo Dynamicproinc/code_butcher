@@ -10,8 +10,9 @@ use App\Models\ProductVariation;
 new class extends Component {
     public $stock_transactions;
     public $barcode;
-    public $error_message = '',
-        $success_message = '';
+    public $error_message = '';
+    public $success_message = '';
+    public $client_message;
 
     public function mount()
     {
@@ -20,52 +21,57 @@ new class extends Component {
 
     public function add()
     {
-        $this->error_message = '';
-        $this->success_message = '';
-        $this->validate([
-            'barcode' => 'required|digits:13',
-        ]);
-        $quantity_per_item = 1;
-        $barcode = new BarcodeService();
-        $wc = new WooCommerceService();
+        try {
+            $this->error_message = '';
+            $this->success_message = '';
+            $this->validate([
+                'barcode' => 'required|digits:13',
+            ]);
+            $quantity_per_item = 1;
+            $barcode = new BarcodeService();
+            $wc = new WooCommerceService();
 
-        $barcode_decode = $barcode->decodeBarcode($this->barcode);
-        // get product details
-        $product_code = $barcode_decode['product_code'];
-        $weight_in_kg = $barcode_decode['weight_in_kg'];
-        $weight = $barcode_decode['weight'];
+            $barcode_decode = $barcode->decodeBarcode($this->barcode);
+            // get product details
+            $product_code = $barcode_decode['product_code'];
+            $weight_in_kg = $barcode_decode['weight_in_kg'];
+            $weight = $barcode_decode['weight'];
 
-        // apply logic
-        if ($product = Product::where('product_code', $product_code)->first()) {
-            // existing quantity validation
+            // apply logic
+            if ($product = Product::where('product_code', $product_code)->first()) {
+                // existing quantity validation
 
-            // now if product has variation
-            $variation = '0';
-            if ($product->variation) {
-                $variation = $weight - ($weight % $product->threshold);
+                // now if product has variation
+                $variation = '0';
+                if ($product->variation) {
+                    $variation = $weight - ($weight % $product->threshold);
 
-                // find the variation
-                $v = ProductVariation::where('wc_product_id', $product->wc_product_id)->where('variation_code', $variation)->first();
-                if ($v) {
-                    $wc->dispatchStock($v->wc_product_id, $v->wc_variation_id, $quantity_per_item);
-                    $this->success_message = __('Item quantity updated succesfully');
-                    // $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update success.');
-                    // $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update success.');
+                    // find the variation
+                    $v = ProductVariation::where('wc_product_id', $product->wc_product_id)->where('variation_code', $variation)->first();
+                    if ($v) {
+                        $wc->dispatchStock($v->wc_product_id, $v->wc_variation_id, $quantity_per_item);
+                        $this->success_message = __('Item quantity updated succesfully');
+                        // $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update success.');
+                        // $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update success.');
+                    } else {
+                        // $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update faild.');
+                        $this->error_message = __('Process coudnt processed, some thing went wrong!');
+                    }
                 } else {
-                    // $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update faild.');
-                    $this->error_message = __('Process coudnt processed, some thing went wrong!');
+                    $wc->dispatchStock($product->wc_product_id, null, $quantity_per_item);
+                    $this->success_message = __('Item quantity updated succesfully');
                 }
             } else {
-                $wc->dispatchStock($product->wc_product_id, null, $quantity_per_item);
-                $this->success_message = __('Item quantity updated succesfully');
+                $this->error_message = __('Invalid barcode');
             }
-        } else {
-            $this->error_message = __('Invalid barcode');
-        }
 
-        $this->barcode = '';
-        // end logic
-        $this->stock_transactions = StockTransaction::latest()->where('type', 'OUT')->whereDate('created_at', today())->limit(20)->get();
+            $this->barcode = '';
+            // end logic
+            $this->stock_transactions = StockTransaction::latest()->where('type', 'OUT')->whereDate('created_at', today())->limit(20)->get();
+        } catch (\Throwable $th) {
+            // $this->client_message = $th->getMessage();
+            $this->client_message = 'The process could not be completed due to an issue connecting to the WooCommerce server.';
+        }
     }
 };
 ?>
@@ -105,6 +111,9 @@ new class extends Component {
                             <small class="text-danger note">{{ $message }}</small>
                         @enderror
                     </div>
+                    <div>
+
+                    </div>
                 </div>
             </div>
         </div>
@@ -142,9 +151,19 @@ new class extends Component {
 
                         </tbody>
                     </table>
+
                     <div>
                         {{-- {{$stock_transactions->links()}} --}}
                     </div>
+                </div>
+
+                <div class="log-box text-danger">
+                    @if ($client_message)
+                        <div class="simple-alert-danger">
+
+                            {{ $client_message }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

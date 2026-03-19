@@ -10,6 +10,7 @@ new class extends Component {
     public $barcode;
     public $error_message;
     public $log = [];
+    public $client_message;
 
     public function addDispatchCart()
     {
@@ -113,7 +114,8 @@ new class extends Component {
 
     public function update()
     {
-        $cart_items = session()->get('cart_items_for_dispatch', []);
+        try {
+            $cart_items = session()->get('cart_items_for_dispatch', []);
         $wc = new WooCommerceService();
         foreach ($cart_items as $item) {
             $product = Product::where('product_code', $item['code'])->first();
@@ -139,6 +141,10 @@ new class extends Component {
                 $this->writeLog("Product ID: {$item['code']} Variation ID: " . ($item['variation'] ?? 0) . ' Update failed.');
             }
             session()->forget('cart_items_for_dispatch');
+        }
+        } catch (\Throwable $th) {
+            //  $this->client_message = $th->getMessage();
+              $this->client_message = 'The process could not be completed due to an issue connecting to the WooCommerce server.';
         }
     }
     function writeLog($message)
@@ -283,6 +289,14 @@ new class extends Component {
                 {{ __('Dispatch') }}
             </button>
         </div>
+         <div class="log-box text-danger">
+               @if($client_message)
+                <div class="simple-alert-danger">
+
+                    {{$client_message}}
+                </div>
+                @endif
+            </div>
         <div class="log-box">
             @if (count($log))
                 <h6>Log</h6>
