@@ -86,7 +86,7 @@ new class extends Component {
 
                     <script src="https://unpkg.com/html5-qrcode"></script>
 
-                    <div id="reader" style="width:300px"></div>
+                    <div id="reader" style="width:100%; height: 300px;"></div>
 
                     <script>
                         const scanner = new Html5QrcodeScanner("reader", {
