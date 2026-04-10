@@ -121,6 +121,7 @@ new class extends Component {
                                             console.log("Barcode:", result.text);
 
                                             // @this.getQr(result.text); // Livewire
+                                            alert("Scanned: " + result.text); // For demo
 
                                             codeReader.reset(); // stop after success
                                         }
