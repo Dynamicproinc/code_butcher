@@ -90,12 +90,13 @@ new class extends Component {
                 <div>
 
 
-                    <script src="https://unpkg.com/html5-qrcode"></script>
+                    {{-- <script src="https://unpkg.com/html5-qrcode"></script>
 
                     <div id="reader" style="width:300px"></div>
-                    <input type="text" id="barcode" placeholder="Scanned code will appear here">
-
+                    
+                    
                     <script>
+                        
                         const html5QrCode = new Html5Qrcode("reader");
 
                         let isScanning = false; // 🔒 lock to prevent duplicates
@@ -107,7 +108,7 @@ new class extends Component {
                             // alert(`Scanned: ${decodedText}`); // ✅ Show scanned code
 
                             // ✅ Put value into input (optional)
-                            document.getElementById("barcode").value = decodedText;
+                          
 
                             //set values to livewire component input and trigger add method
                                $wire.getBarcode(decodedText);
@@ -146,7 +147,7 @@ new class extends Component {
                                 onScanSuccess
                             );
                         });
-                    </script>
+                    </script> --}}
 
 
                 </div>
