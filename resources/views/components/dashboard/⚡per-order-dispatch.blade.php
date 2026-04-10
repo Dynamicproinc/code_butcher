@@ -80,10 +80,7 @@ new class extends Component {
     <div class="">
         <div class="">
             <div class="mb-3">
-                <button id="startScan" class="btn btn-primary mb-2">{{ __('Start Camera Scan') }}</button>
-                <div>
-                    <video id="camera" width="300" height="200" style="border: 1px solid black"></video>
-                </div>
+               
                 <div>
 
 
@@ -98,7 +95,7 @@ new class extends Component {
                         });
 
                         scanner.render((decodedText) => {
-                            console.log("Scanned:", decodedText);
+                          alert(`Decoded text: ${decodedText}`);
                         });
                     </script>
 
