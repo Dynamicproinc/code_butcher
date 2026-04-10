@@ -22,7 +22,7 @@ new class extends Component {
     public function getBarcode($value)
     {
         $this->barcode = $value;
-        // $this->add();
+        $this->add();
     }
 
     public function add()
