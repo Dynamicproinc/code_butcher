@@ -132,27 +132,7 @@ class WooCommerceService
        
 
     }
-    // public function getAllProduct()
-    // {
-        
-       
-    //      $response = $this->client->get(
-    //         "/wp-json/wc/v3/products",
-    //        [
-    //             'query' => [
-    //                 'per_page' => 20,
-    //     'page' => $page,
-    //      'status' => 'publish'
-    //             ]
-    //         ]
-    //     );
-    //     return $response;
-       
-
-       
-
-    // }
-
+   
 
 
     public function getVariationQuantity($product_id, $variation_id){
