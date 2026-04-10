@@ -80,65 +80,28 @@ new class extends Component {
     <div class="">
         <div class="">
             <div class="mb-3">
-                  <button id="startScan" class="btn btn-primary mb-2">{{ __('Start Camera Scan') }}</button>
-                    <div>
-                        <video id="camera" width="300" height="200" style="border: 1px solid black"></video>
-                    </div>
+                <button id="startScan" class="btn btn-primary mb-2">{{ __('Start Camera Scan') }}</button>
                 <div>
-                    <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.20.0/umd/index.min.js"></script>
+                    <video id="camera" width="300" height="200" style="border: 1px solid black"></video>
+                </div>
+                <div>
+
+
+                    <script src="https://unpkg.com/html5-qrcode"></script>
+
+                    <div id="reader" style="width:300px"></div>
 
                     <script>
-                        const videoElement = document.getElementById('camera');
-                        const startButton = document.getElementById('startScan');
+                        const scanner = new Html5QrcodeScanner("reader", {
+                            fps: 10,
+                            qrbox: 250
+                        });
 
-                        // 🎯 Restrict ONLY to barcodes (no QR)
-                        const hints = new Map();
-                        hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [
-                            ZXing.BarcodeFormat.CODE_128,
-                            ZXing.BarcodeFormat.CODE_39,
-                            ZXing.BarcodeFormat.EAN_13,
-                            ZXing.BarcodeFormat.EAN_8,
-                            ZXing.BarcodeFormat.UPC_A,
-                            ZXing.BarcodeFormat.UPC_E
-                        ]);
-
-                        const codeReader = new ZXing.BrowserMultiFormatReader(hints);
-
-                        startButton.addEventListener('click', async () => {
-                            try {
-                                const devices = await codeReader.listVideoInputDevices();
-
-                                // 📷 Prefer back camera
-                                const selectedDevice = devices.find(d =>
-                                    d.label.toLowerCase().includes('back')
-                                ) || devices[0];
-
-                                await codeReader.decodeFromVideoDevice(
-                                    selectedDevice.deviceId,
-                                    videoElement,
-                                    (result, err) => {
-                                        if (result) {
-                                            console.log("Barcode:", result.text);
-
-                                            // @this.getQr(result.text); // Livewire
-                                            alert("Scanned: " + result.text); // For demo
-
-                                            codeReader.reset(); // stop after success
-                                        }
-
-                                        if (err && !(err instanceof ZXing.NotFoundException)) {
-                                            console.error(err);
-                                        }
-                                    }
-                                );
-
-                            } catch (error) {
-                                console.error("Camera error:", error);
-                            }
+                        scanner.render((decodedText) => {
+                            console.log("Scanned:", decodedText);
                         });
                     </script>
 
-                  
 
                 </div>
                 <input type="text" wire:model="barcode" class="form-control mb-2"
