@@ -110,7 +110,7 @@ new class extends Component {
                             document.getElementById("barcode").value = decodedText;
 
                             //set values to livewire component input and trigger add method
-                            //   @this.getBarcode(decodedText);
+                               $wire.getBarcode(decodedText);
                             // ✅ Stop camera immediately
                             // html5QrCode.stop().then(() => {
 
