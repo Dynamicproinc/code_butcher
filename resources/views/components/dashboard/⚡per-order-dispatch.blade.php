@@ -121,17 +121,20 @@ function onScanSuccess(decodedText) {
 
 // Start scanner
 Html5Qrcode.getCameras().then(devices => {
-    if (devices.length) {
-        html5QrCode.start(
-            devices[0].id,
-          
-            {
-                fps: 10,
-                qrbox: { width: 250, height: 250 }
-            },
-            onScanSuccess
-        );
-    }
+
+    // Try to find back camera
+    let backCamera = devices.find(device =>
+        device.label.toLowerCase().includes("back") ||
+        device.label.toLowerCase().includes("rear")
+    );
+
+    let cameraId = backCamera ? backCamera.id : devices[0].id;
+
+    html5QrCode.start(
+        cameraId,
+        { fps: 10, qrbox: 250 },
+        onScanSuccess
+    );
 });
 </script>
 
