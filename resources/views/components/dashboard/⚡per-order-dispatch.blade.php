@@ -80,63 +80,65 @@ new class extends Component {
     <div class="">
         <div class="">
             <div class="mb-3">
-               
+
                 <div>
 
 
-                   <script src="https://unpkg.com/html5-qrcode"></script>
+                    <script src="https://unpkg.com/html5-qrcode"></script>
 
-<div id="reader" style="width:300px"></div>
-<input type="text" id="barcode" placeholder="Scanned code will appear here">
+                    <div id="reader" style="width:300px"></div>
+                    <input type="text" id="barcode" placeholder="Scanned code will appear here">
 
-<script>
-const html5QrCode = new Html5Qrcode("reader");
+                    <script>
+                        const html5QrCode = new Html5Qrcode("reader");
 
-let isScanning = false; // 🔒 lock to prevent duplicates
+                        let isScanning = false; // 🔒 lock to prevent duplicates
 
-function onScanSuccess(decodedText) {
-    if (isScanning) return; // 🚫 ignore duplicates
-    isScanning = true;
+                        function onScanSuccess(decodedText) {
+                            if (isScanning) return; // 🚫 ignore duplicates
+                            isScanning = true;
 
-    alert(`Scanned: ${decodedText}`); // ✅ Show scanned code
+                            // alert(`Scanned: ${decodedText}`); // ✅ Show scanned code
 
-    // ✅ Put value into input (optional)
-    document.getElementById("barcode").value = decodedText;
+                            // ✅ Put value into input (optional)
+                            document.getElementById("barcode").value = decodedText;
 
-    // ✅ Stop camera immediately
-    html5QrCode.stop().then(() => {
+                            // ✅ Stop camera immediately
+                            // html5QrCode.stop().then(() => {
 
-        // ✅ Clear camera UI
-        html5QrCode.clear();
+                            //     // ✅ Clear camera UI
+                            //     html5QrCode.clear();
 
-        // ✅ Hide scanner div
-        document.getElementById("reader").style.display = "none";
+                            //     // ✅ Hide scanner div
+                            //     document.getElementById("reader").style.display = "none";
 
-        console.log("Scanner stopped & hidden");
+                            //     console.log("Scanner stopped & hidden");
 
-    }).catch(err => {
-        console.error("Stop failed:", err);
-    });
-}
+                            // }).catch(err => {
+                            //     console.error("Stop failed:", err);
+                            // });
+                        }
 
-// Start scanner
-Html5Qrcode.getCameras().then(devices => {
+                        // Start scanner
+                        Html5Qrcode.getCameras().then(devices => {
 
-    // Try to find back camera
-    let backCamera = devices.find(device =>
-        device.label.toLowerCase().includes("back") ||
-        device.label.toLowerCase().includes("rear")
-    );
+                            // Try to find back camera
+                            let backCamera = devices.find(device =>
+                                device.label.toLowerCase().includes("back") ||
+                                device.label.toLowerCase().includes("rear")
+                            );
 
-    let cameraId = backCamera ? backCamera.id : devices[0].id;
+                            let cameraId = backCamera ? backCamera.id : devices[0].id;
 
-    html5QrCode.start(
-        cameraId,
-        { fps: 10, qrbox: 250 },
-        onScanSuccess
-    );
-});
-</script>
+                            html5QrCode.start(
+                                cameraId, {
+                                    fps: 10,
+                                    qrbox: 250
+                                },
+                                onScanSuccess
+                            );
+                        });
+                    </script>
 
 
                 </div>
