@@ -19,6 +19,12 @@ new class extends Component {
         $this->stock_transactions = StockTransaction::latest()->where('type', 'OUT')->whereDate('created_at', today())->limit(20)->get();
     }
 
+    public function getBarcode($value)
+    {
+        $this->barcode = $value;
+        $this->add();
+    }
+
     public function add()
     {
         try {
@@ -103,6 +109,8 @@ new class extends Component {
                             // ✅ Put value into input (optional)
                             document.getElementById("barcode").value = decodedText;
 
+                            //set values to livewire component input and trigger add method
+                              @this.getBarcode(result.text);
                             // ✅ Stop camera immediately
                             // html5QrCode.stop().then(() => {
 
