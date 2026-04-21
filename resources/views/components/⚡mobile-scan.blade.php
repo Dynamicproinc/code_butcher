@@ -3,7 +3,12 @@
 use Livewire\Component;
 
 new class extends Component {
-    public function scan() {}
+
+    public $barcode;
+
+    public function setCode($barcode) {
+        $this->barcode = $barcode;
+    }
 
     public function add(){
 
@@ -21,7 +26,7 @@ new class extends Component {
             <div class="container">
                 <div class="row">
                 <div class="col-8">
-                    <input type="text" class="form-control form-control-lg">
+                    <input type="text" class="form-control form-control-lg" wire:model="barcode">
                 </div>
                 <div class="col-4">
                     <button class="btn btn-primary w-100 btn-lg">ADD</button>
@@ -38,7 +43,7 @@ new class extends Component {
                     console.log(`Scan result: ${decodedText}`, decodedResult);
                     document.getElementById('barcode-result').innerText = `Scan result: ${decodedText}`;
                     //set wire:model value
-                    // $wire.getBarcode(decodedText);
+                     $wire.setCode(decodedText);
                 }
 
                 function onScanFailure(error) {
