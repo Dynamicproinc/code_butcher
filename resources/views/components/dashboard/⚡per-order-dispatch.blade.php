@@ -91,12 +91,14 @@ new class extends Component {
                   <script src="https://unpkg.com/html5-qrcode"></script>
 
 <div id="reader" style="width:300px; "></div>
+<p id="barcode-result"></p>
 
 
 <script>
 function onScanSuccess(decodedText, decodedResult) {
     // Handle on success condition with the decoded text or result.
     console.log(`Scan result: ${decodedText}`, decodedResult);
+    document.getElementById('barcode-result').innerText = `Scan result: ${decodedText}`;
     // @this.getBarcode(decodedText);
 }
 
