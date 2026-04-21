@@ -305,7 +305,7 @@ new class extends Component {
         {{-- errror --}}
         @if ($error_message)
             <div x-data x-init="setTimeout(() => $wire.set('error_message', null), 2000)" class="fixed-top text-white bg-danger p-1 text-center">
-              <i class="bi bi-check-circle-fill"></i>  {{ $error_message }}
+              <i class="bi bi-exclamation-triangle-fill"></i>  {{ $error_message }}
             </div>
         @endif
             {{-- bottom buttons --}}
