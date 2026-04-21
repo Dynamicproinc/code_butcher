@@ -24,7 +24,7 @@
       display: none !important;
     }
     .item-details{
-      max-height: 175px;
+      max-height: 220px;
       overflow-y: auto;
       border:1px solid #333;
 
