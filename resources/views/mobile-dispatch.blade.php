@@ -24,13 +24,17 @@
       display: none !important;
     }
     .item-details{
-      max-height: 220px;
+   max-height: calc(100% - 50px);
       overflow-y: auto;
      border-radius: 8px;
       box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.08),
             inset 0 -2px 6px rgba(255, 255, 255, 0.6);
       border:1px solid #eee;
 
+    }
+    .bg-dsbl{
+      background-color: #EAE6DD !important;
+    
     }
    </style>
     @livewireScripts
