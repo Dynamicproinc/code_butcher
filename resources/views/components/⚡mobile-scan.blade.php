@@ -63,17 +63,24 @@ new class extends Component {
            </div>
             <div class="container">
                 <div class="">
-                    <div class="row mb-3">
-                        <div class="col-8">
+                    <div class=" mb-3">
+                        <div class="">
                             <input type="text" class="form-control form-control-lg" wire:model="barcode">
                         </div>
-                        <div class="col-4">
-                            <button class="btn btn-primary w-100 btn-lg" wire:click="add">ADD</button>
-                        </div>
+                       
                     </div>
                     <div class="p-2 bg-light">
-                      
-                        <h6> {{ $product_name  }} -  <strong>{{ $weight }} kg</strong></h6>
+                      <div class="row">
+                        <div class="col-8">
+                             <div class="p-2">
+                                <h6> {{ $product_name  }} -  <strong>{{ $variation_weight }}</strong></h6>
+                             </div>
+                        </div>
+                         <div class="col-4">
+                            <button class="btn btn-primary w-100 btn-lg" wire:click="add">ADD</button>
+                        </div>
+                      </div>
+                       
                        
                     </div>
                 </div>
