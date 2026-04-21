@@ -143,7 +143,8 @@ new class extends Component {
                                 <div class="">
                                     @if ($find_product)
                                         <h6 class="text-uppercase"> {{ $product_name ?? 'No product' }} -
-                                            <strong>{{ $variation_weight }}</strong></h6>
+                                            <strong>{{ $variation_weight }}</strong>
+                                        </h6>
                                     @endif
                                 </div>
                             </div>
@@ -159,17 +160,39 @@ new class extends Component {
                     <div>
                         <div>
                             @if (session('cart_items_for_dispatch', []))
-                                <ol class="list-group list-group-numbered">
-                                    @foreach (session('cart_items_for_dispatch') as $key => $item)
-                                        <li class="list-group-item d-flex justify-content-between align-items-start">
+
+                                @foreach (session('cart_items_for_dispatch') as $key => $item)
+                                    {{-- <li class="list-group-item d-flex justify-content-between align-items-start">
                                             <div class="ms-2 me-auto">
                                                 <div class="fw-bold text-uppercase">{{ $item['description'] }}</div>
                                                 <div class="small text-muted fw-bold">{{ $item['variation'] }}</div>
                                             </div>
-                                            <span class="badge text-bg-primary rounded-pill">{{ $item['quantity'] }}</span>
-                                        </li>
-                                    @endforeach
-                                </ol>
+                                            <span
+                                                class="badge text-bg-primary rounded-pill">{{ $item['quantity'] }}</span>
+                                        </li> --}}
+                                    <div class="rounded-4 bg-white shadow p-2 px-3 mb-3">
+                                        <div class="row align-items-center">
+                                            <div class="col-5">
+                                                <div class="fw-bold text-uppercase">{{ $item['description'] }}</div>
+                                                <div class="small text-muted fw-bold">{{ $item['variation'] }}</div>
+                                            </div>
+                                            <div class="col-5">
+                                                <button class="btn btn-sm btn-outline-primary">-</button>
+                                                <strong>{{ $item['quantity'] }}</strong>
+                                                <button class="btn btn-sm btn-outline-primary">+</button>
+                                            </div>
+                                            <div class="col-2">
+                                                <button class="btn btn-default text-danger"><i
+                                                        class="bi bi-trash3-fill"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @else
+                                <div class="text-center text-muted">
+                                    No items added yet.
+                                </div>
+
                             @endif
 
 
