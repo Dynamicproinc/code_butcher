@@ -12,6 +12,7 @@ new class extends Component {
     public $product_name;
     public $variation_weight;
     public $find_product = false;
+    public $success_message;
     // public $product;
 
     public function setCode($barcode)
@@ -116,6 +117,7 @@ new class extends Component {
         $this->find_product = false;
         $this->variation_weight = '';
         $this->product_name = '';
+        $this->success_message = 'Item added';
     }
 
     public function removeItem($key)
@@ -164,10 +166,10 @@ new class extends Component {
             function onScanSuccess(decodedText, decodedResult) {
 
                 // Handle on success condition with the decoded text or result.
-                 console.log(`Scan result: ${decodedText}`, decodedResult);
+                console.log(`Scan result: ${decodedText}`, decodedResult);
                 // document.getElementById('barcode-result').innerText = `Scan result: ${decodedText}`;
                 //set wire:model value
-                 $wire.setCode(decodedText);
+                $wire.setCode(decodedText);
                 // html5QrcodeScanner.clear();
             }
 
@@ -222,8 +224,8 @@ new class extends Component {
                                 </div>
                             </div>
                             <div class="col-4">
-                                <button class="btn btn-primary w-100 btn-lg"
-                                    wire:click="add">{{ __('Add') }}</button>
+                                <button class="btn btn-primary w-100 btn-lg" wire:click="add"
+                                    wire:loading.attr="disabled">{{ __('Add') }}</button>
                             </div>
                         </div>
 
@@ -291,6 +293,12 @@ new class extends Component {
 
         </div>
         {{-- eend camera --}}
+        @if ($success_message)
+            <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 2000)" x-show="show"
+                class="fixed-top bg-success p-1 text-center">
+                {{ $success_message }}
+            </div>
+        @endif
 
         <div class="fixed-bottom p-3 bg-dsbl">
             <div class="row">
