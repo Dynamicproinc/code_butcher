@@ -37,8 +37,10 @@ new class extends Component {
                  
                 $this->variation_weight =  $weight - ($weight % $product->threshold);
 
+            }else{
+
+                $this->find_product = false;
             }
-            $this->find_product = false;
              
 
              
