@@ -14,46 +14,35 @@ new class extends Component {
     public $find_product = false;
     // public $product;
 
-
     public function setCode($barcode)
     {
-       
         // // search the product :
-       
-             $quantity_per_item = 1;
-            $barcode_service = new BarcodeService();
-            $wc = new WooCommerceService();
-             $barcode_decode = $barcode_service->decodeBarcode($barcode);
-            // get product details
-            $product_code = $barcode_decode['product_code'];
-            $weight_in_kg = $barcode_decode['weight_in_kg'];
-            $weight = $barcode_decode['weight'];
-            
 
-            $product = Product::where('product_code', $product_code)->first();
-            if($product){
-                $this->find_product = true;
-                 $this->product_name = $product->product_name;
-                 
-                $this->variation_weight =  $weight - ($weight % $product->threshold);
-                 $this->barcode = $barcode;
+        $quantity_per_item = 1;
+        $barcode_service = new BarcodeService();
+        $wc = new WooCommerceService();
+        $barcode_decode = $barcode_service->decodeBarcode($barcode);
+        // get product details
+        $product_code = $barcode_decode['product_code'];
+        $weight_in_kg = $barcode_decode['weight_in_kg'];
+        $weight = $barcode_decode['weight'];
 
-            }else{
+        $product = Product::where('product_code', $product_code)->first();
+        if ($product) {
+            $this->find_product = true;
+            $this->product_name = $product->product_name;
 
-                $this->find_product = false;
-            }
-             
-
-             
-
-
+            $this->variation_weight = $weight - ($weight % $product->threshold);
+            $this->barcode = $barcode;
+        } else {
+            $this->find_product = false;
+        }
     }
 
-    public function add() {
-        
-       $this->error_message = '';
+    public function add()
+    {
+        $this->error_message = '';
 
-       
         $barcode = new BarcodeService();
         $barcode_decode = $barcode->decodeBarcode($this->barcode);
         // get product details
@@ -67,8 +56,6 @@ new class extends Component {
             $variation = '0';
             if ($product->variation) {
                 $variation = $weight - ($weight % $product->threshold);
-
-              
 
                 $cartItems = session()->get('cart_items_for_dispatch', []);
                 $found = false;
@@ -126,11 +113,9 @@ new class extends Component {
         }
 
         $this->barcode = '';
-            $this->find_product = false;
-            $this->variation_weight = '';
-            $this->product_name = '';
-
-                
+        $this->find_product = false;
+        $this->variation_weight = '';
+        $this->product_name = '';
     }
 };
 ?>
@@ -138,85 +123,61 @@ new class extends Component {
 <div>
     <div>
         {{-- for camera --}}
-        <div >
+        <div>
 
 
-           <div wire:ignore class="camera mb-3">
-             <div id="reader" class="" style="width:350px;"></div>
-           </div>
+            <div wire:ignore class="camera mb-3">
+                <div id="reader" class="" style="width:350px;"></div>
+            </div>
             <div class="container">
                 <div class="">
                     <div class=" mb-3">
                         <div class="">
                             <input type="text" class="form-control form-control-lg" wire:model="barcode">
                         </div>
-                       
+
                     </div>
-                    <div class="p-2 bg-light">
-                      <div class="row align-items-center">
-                        <div class="col-8">
-                             <div class="">
-                               @if($find_product)
-                                <h6 class="text-uppercase"> {{ $product_name ?? 'No product' }} -  <strong>{{ $variation_weight }}</strong></h6>
-                               @endif
-                             </div>
+                    <div class="p-2 bg-light mb-3">
+                        <div class="row align-items-center">
+                            <div class="col-8">
+                                <div class="">
+                                    @if ($find_product)
+                                        <h6 class="text-uppercase"> {{ $product_name ?? 'No product' }} -
+                                            <strong>{{ $variation_weight }}</strong></h6>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <button class="btn btn-primary w-100 btn-lg" wire:click="add">ADD</button>
+                            </div>
                         </div>
-                         <div class="col-4">
-                            <button class="btn btn-primary w-100 btn-lg" wire:click="add">ADD</button>
-                        </div>
-                      </div>
-                       
-                       
+
+
                     </div>
                     {{-- table --}}
-                        <div class=" mb-5">
-            <table class="table table-sm table-striped table-responsive c-table">
-                <thead>
-                    <tr>
-                        <th scope="col">{{ __('BARCODE') }}</th>
-                        <th scope="col">{{ __('CODE') }}</th>
-                        <th scope="col">{{ __('DESC.') }}</th>
-                        <th scope="col">{{ __('VA.') }}</th>
-                        <th scope="col">{{ __('QUANTITY') }}</th>
-                        {{-- <th scope="col">{{ __('WEIGHT') }}</th> --}}
-                        <th scope="col"></th>
 
-                    </tr>
-                </thead>
-                <tbody>
-
-                    @if (session('cart_items_for_dispatch', []))
-                        @foreach (session('cart_items_for_dispatch') as $key => $item)
-                            <tr>
-
-                                <td>{{ $item['barcode'] }}</td>
-                                <td>{{ $item['code'] }}</td>
-                                <td>{{ $item['description'] }}</td>
-                                <td>{{ $item['variation'] }}</td>
-                                <td>{{ $item['quantity'] }}</td>
-                                {{-- <td>{{ $item['weight'] }}</td> --}}
-                                <td>
-                                    <button class="btn btn-sm btn-outline-primary"
-                                        wire:click="decrement({{ $key }})">-</button>
-                                    <button class="btn btn-sm btn-outline-primary"
-                                        wire:click="increment({{ $key }})">+</button>
-                                    <button class="btn btn-sm btn-outline-danger"
-                                        wire:click="removeItem('{{ $key }}')">{{ __('Remove') }}</button>
-                                </td>
-
-                            </tr>
-                        @endforeach
-                    @else
-                        <tr>
-                            <td colspan="7" class="text-center">{{ __('No items added yet.') }}</td>
-                        </tr>
-                    @endif
+                    <div>
+                        <div>
+                            @if (session('cart_items_for_dispatch', []))
+                                <ol class="list-group list-group-numbered">
+                                    @foreach (session('cart_items_for_dispatch') as $key => $item)
+                                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                                            <div class="ms-2 me-auto">
+                                                <div class="fw-bold text-uppercase">{{ $item['description'] }}</div>
+                                                <div class="small text-muted fw-bold">{{ $item['variation'] }}</div>
+                                            </div>
+                                            <span class="badge text-bg-primary rounded-pill">{{ $item['quantity'] }}</span>
+                                        </li>
+                                    @endforeach
+                                </ol>
+                            @endif
 
 
-                </tbody>
-            </table>
 
-        </div>
+
+                        </div>
+                    </div>
+
                     {{-- end table --}}
                 </div>
             </div>
