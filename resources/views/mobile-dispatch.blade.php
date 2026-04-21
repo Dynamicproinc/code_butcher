@@ -8,7 +8,8 @@
    <style>
     .camera{
         width: 100%;
-        height: 300px;
+        /* height: 300px; */
+        height: auto;
     }
     #html5-qrcode-button-camera-stop{
         display: none !important;
