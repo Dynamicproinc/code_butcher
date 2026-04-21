@@ -282,7 +282,7 @@ new class extends Component {
         </div>
         {{-- eend camera --}}
 
-        <div class="fixed-bottom p-3">
+        <div class="fixed-bottom p-3 bg-light">
             <div class="row">
                 
                 <div class="col-4">
