@@ -24,7 +24,7 @@
       display: none !important;
     }
     .item-details{
-   max-height: calc(100% - 50px);
+    max-height: 220px;
       overflow-y: auto;
      border-radius: 8px;
       box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.08),
@@ -32,10 +32,10 @@
       border:1px solid #eee;
 
     }
-    .bg-dsbl{
+    /* .bg-dsbl{
       background-color: #EAE6DD !important;
     
-    }
+    } */
    </style>
     @livewireScripts
         @livewireStyles

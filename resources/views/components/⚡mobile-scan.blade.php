@@ -173,7 +173,7 @@ new class extends Component {
                         </div>
 
                     </div>
-                    <div class="p-2 bg-light mb-3">
+                    <div class="p-2 mb-3">
                         <div class="row align-items-center">
                             <div class="col-8">
                                 <div class="">
