@@ -194,7 +194,7 @@ new class extends Component {
                     {{-- table --}}
 
                     <div>
-                        <div>
+                        <div class="item-details">
                             @if (session('cart_items_for_dispatch', []))
 
                                 @foreach (session('cart_items_for_dispatch') as $key => $item)

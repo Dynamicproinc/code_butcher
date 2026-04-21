@@ -23,6 +23,12 @@
     #reader__dashboard_section{
       display: none !important;
     }
+    .item-details{
+      max-height: 350px;
+      overflow-y: auto;
+      border:1px solid #333;
+
+    }
    </style>
     @livewireScripts
         @livewireStyles
