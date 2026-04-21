@@ -9,7 +9,7 @@
     .camera{
         width: 100%;
         /* height: 300px; */
-        height: 350px ;
+        height: 300px ;
         background: #000;
         overflow: hidden;
     }
