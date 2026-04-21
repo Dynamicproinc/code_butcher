@@ -178,7 +178,7 @@ new class extends Component {
                                             </div>
                                             <div class="col-5">
                                                 <button class="btn btn-sm btn-outline-primary m-2">-</button>
-                                                <strong>{{ $item['quantity'] }}</strong>
+                                                <strong style="width:50px;text-align:center">{{ $item['quantity'] }}</strong>
                                                 <button class="btn btn-sm btn-outline-primary m-2">+</button>
                                             </div>
                                             <div class="col-2">
