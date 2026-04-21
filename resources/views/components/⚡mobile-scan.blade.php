@@ -15,20 +15,20 @@ new class extends Component {
     public function setCode($barcode)
     {
         $this->barcode = $barcode;
-        // search the product :
+        // // search the product :
        
-            $quantity_per_item = 1;
-            $barcode = new BarcodeService();
-            $wc = new WooCommerceService();
-             $barcode_decode = $barcode->decodeBarcode($this->barcode);
-            // get product details
-            $product_code = $barcode_decode['product_code'];
-            $weight_in_kg = $barcode_decode['weight_in_kg'];
-            $weight = $barcode_decode['weight'];
+        //     $quantity_per_item = 1;
+        //     $barcode = new BarcodeService();
+        //     $wc = new WooCommerceService();
+        //      $barcode_decode = $barcode->decodeBarcode($this->barcode);
+        //     // get product details
+        //     $product_code = $barcode_decode['product_code'];
+        //     $weight_in_kg = $barcode_decode['weight_in_kg'];
+        //     $weight = $barcode_decode['weight'];
 
-             if ($product = Product::where('product_code', $product_code)->first()) {
-                $this->product_name = $product->product_name;
-             }
+        //      if ($product = Product::where('product_code', $product_code)->first()) {
+        //         $this->product_name = $product->product_name;
+        //      }
 
     }
 
@@ -56,7 +56,7 @@ new class extends Component {
                         </div>
                     </div>
                     <div class="p-2 bg-light">
-                        <h6>{{ $product->name ?? 'unknown' }} - 0.355 kg - <strong>0.340 kg</strong></h6>
+                        <h6> - 0.355 kg - <strong>0.340 kg</strong></h6>
                     </div>
                 </div>
             </div>
