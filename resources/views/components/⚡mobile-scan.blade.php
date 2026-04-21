@@ -281,5 +281,17 @@ new class extends Component {
 
         </div>
         {{-- eend camera --}}
+
+        <div class="fixed-bottom p-3">
+            <div class="row">
+                
+                <div class="col-4">
+                    <button class="btn btn-default btn-lg w-100">{{__('Cancel')}}</button>
+                </div>
+                <div class="col-8">
+                    <button class="btn btn-primary btn-lg w-100">{{__('Update WC')}}</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
