@@ -28,6 +28,7 @@ new class extends Component {
     }
 
     public function add() {
+        
         $quantity_per_item = 1;
             $barcode_service = new BarcodeService();
             $wc = new WooCommerceService();
@@ -41,6 +42,7 @@ new class extends Component {
             //  $product = Product::where('product_code', $product_code)->first();
             //     $this->product_name = $product->product_name;
                 $this->weight = $weight;
+                dd($this->weight);
     }
 };
 ?>
