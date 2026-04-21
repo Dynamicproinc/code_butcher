@@ -64,7 +64,7 @@ new class extends Component {
                     </div>
                     <div class="p-2 bg-light">
                       
-                        <h6> {{ $product_name  }}- 0.355 kg - <strong>0.340 kg</strong></h6>
+                        <h6> {{ $product_name  }}- 0.355 kg - <strong>{{ $weight }} kg</strong></h6>
                        
                     </div>
                 </div>
