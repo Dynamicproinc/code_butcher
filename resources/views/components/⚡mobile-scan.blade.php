@@ -42,7 +42,7 @@ new class extends Component {
             //  $product = Product::where('product_code', $product_code)->first();
             //     $this->product_name = $product->product_name;
                 $this->weight = $weight;
-                dd($this->weight);
+                
     }
 };
 ?>
@@ -50,10 +50,12 @@ new class extends Component {
 <div>
     <div>
         {{-- for camera --}}
-        <div wire:ignore>
+        <div >
 
 
-            <div id="reader" class="camera mb-3"></div>
+           <div wire:ignore>
+             <div id="reader" class="camera mb-3"></div>
+           </div>
             <div class="container">
                 <div class="">
                     <div class="row mb-3">
