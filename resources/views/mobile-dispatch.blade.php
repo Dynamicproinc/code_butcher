@@ -7,6 +7,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
    <style>
+    body{
+      background-color: #F8F9FA !important;
+    }
     .camera{
         width: 100%;
         /* height: 300px; */
@@ -24,7 +27,7 @@
       display: none !important;
     }
     .item-details{
-    max-height: 220px;
+    max-height: 230px;
       overflow-y: auto;
      border-radius: 8px;
       box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.08),
