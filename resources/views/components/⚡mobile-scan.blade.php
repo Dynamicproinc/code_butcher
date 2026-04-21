@@ -185,7 +185,7 @@ new class extends Component {
                                 </div>
                             </div>
                             <div class="col-4">
-                                <button class="btn btn-primary w-100 btn-lg" wire:click="add">ADD</button>
+                                <button class="btn btn-primary w-100 btn-lg" wire:click="add">{{ __('Add') }}</button>
                             </div>
                         </div>
 
