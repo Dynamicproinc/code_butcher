@@ -160,11 +160,46 @@ new class extends Component {
     <div>
         {{-- for camera --}}
         <div>
+             
 
-
-            <div wire:ignore class="camera mb-3">
-                <div id="reader" class="" style="width:350px;"></div>
+            <div  class="camera mb-3">
+                <div id="reader" style="width:350px;"></div>
+                
             </div>
+            <script src="https://unpkg.com/html5-qrcode"></script>
+            <script>
+                function onScanSuccess(decodedText, decodedResult) {
+                    
+                    // Handle on success condition with the decoded text or result.
+                    console.log(`Scan result: ${decodedText}`, decodedResult);
+                    // document.getElementById('barcode-result').innerText = `Scan result: ${decodedText}`;
+                    //set wire:model value
+                    $wire.setCode(decodedText);
+                    // html5QrcodeScanner.clear();
+                }
+
+                function onScanFailure(error) {
+                   console.warn(`Code scan error = ${error}`);
+                    // document.getElementById('barcode-result').innerText = `Scan error: ${error}`;
+                }
+
+                const html5QrcodeScanner = new Html5QrcodeScanner(
+                    "reader", {
+                        fps: 10,
+                        qrbox: 250,
+                        formatsToSupport: [
+                            Html5QrcodeSupportedFormats.CODE_128,
+                            Html5QrcodeSupportedFormats.EAN_13,
+                            Html5QrcodeSupportedFormats.EAN_8,
+                            Html5QrcodeSupportedFormats.UPC_A,
+                            Html5QrcodeSupportedFormats.UPC_E
+                        ]
+                    }
+                );
+
+                html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+            </script>
+
             <div class="container">
                 <div class="">
                     <div class=" mb-3">
@@ -246,37 +281,7 @@ new class extends Component {
             </div>
 
 
-            <script src="https://unpkg.com/html5-qrcode"></script>
-            <script>
-                function onScanSuccess(decodedText, decodedResult) {
-                    // Handle on success condition with the decoded text or result.
-                    console.log(`Scan result: ${decodedText}`, decodedResult);
-                    // document.getElementById('barcode-result').innerText = `Scan result: ${decodedText}`;
-                    //set wire:model value
-                    $wire.setCode(decodedText);
-                    // html5QrcodeScanner.clear();
-                }
-
-                function onScanFailure(error) {
-                    // ignore errors
-                }
-
-                const html5QrcodeScanner = new Html5QrcodeScanner(
-                    "reader", {
-                        fps: 10,
-                        qrbox: 250,
-                        formatsToSupport: [
-                            Html5QrcodeSupportedFormats.CODE_128,
-                            Html5QrcodeSupportedFormats.EAN_13,
-                            Html5QrcodeSupportedFormats.EAN_8,
-                            Html5QrcodeSupportedFormats.UPC_A,
-                            Html5QrcodeSupportedFormats.UPC_E
-                        ]
-                    }
-                );
-
-                html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-            </script>
+           
 
 
         </div>
