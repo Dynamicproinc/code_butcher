@@ -19,11 +19,11 @@ new class extends Component {
         $this->stock_transactions = StockTransaction::latest()->where('type', 'OUT')->whereDate('created_at', today())->limit(20)->get();
     }
 
-    // public function getBarcode($value)
-    // {
-    //     $this->barcode = $value;
-    //     $this->add();
-    // }
+    public function getBarcode($value)
+    {
+        $this->barcode = $value;
+        $this->add();
+    }
 
     public function add()
     {
@@ -95,7 +95,9 @@ new class extends Component {
 
 <script>
 function onScanSuccess(decodedText, decodedResult) {
-    alert("Barcode: " + decodedText);
+    // Handle on success condition with the decoded text or result.
+    console.log(`Scan result: ${decodedText}`, decodedResult);
+    @this.getBarcode(decodedText);
 }
 
 function onScanFailure(error) {
