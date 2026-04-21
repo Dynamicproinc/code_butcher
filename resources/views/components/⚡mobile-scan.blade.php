@@ -157,7 +157,7 @@ new class extends Component {
 ?>
 
 <div>
-    <div class="camera mb-3">
+    <div wire:ignore class="camera mb-3">
         <div id="reader" style="width:350px;"></div>
         <script src="https://unpkg.com/html5-qrcode"></script>
         <script>
