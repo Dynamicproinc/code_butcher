@@ -102,7 +102,7 @@ new class extends Component {
                     // document.getElementById('barcode-result').innerText = `Scan result: ${decodedText}`;
                     //set wire:model value
                     $wire.setCode(decodedText);
-                    html5QrcodeScanner.clear();
+                    // html5QrcodeScanner.clear();
                 }
 
                 function onScanFailure(error) {
