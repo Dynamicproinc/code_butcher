@@ -97,7 +97,7 @@ new class extends Component {
 function onScanSuccess(decodedText, decodedResult) {
     // Handle on success condition with the decoded text or result.
     console.log(`Scan result: ${decodedText}`, decodedResult);
-    @this.getBarcode(decodedText);
+    // @this.getBarcode(decodedText);
 }
 
 function onScanFailure(error) {
