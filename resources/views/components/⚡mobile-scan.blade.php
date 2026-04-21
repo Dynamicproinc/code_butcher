@@ -13,6 +13,7 @@ new class extends Component {
     public $variation_weight;
     public $find_product = false;
     public $success_message;
+    public $error_message;
     // public $product;
 
     public function setCode($barcode)
@@ -37,6 +38,8 @@ new class extends Component {
             $this->barcode = $barcode;
         } else {
             $this->find_product = false;
+            $this->error_message = "Not registered barcode";
+
         }
     }
 
@@ -293,12 +296,19 @@ new class extends Component {
 
         </div>
         {{-- eend camera --}}
+        {{-- succeess --}}
         @if ($success_message)
             <div x-data x-init="setTimeout(() => $wire.set('success_message', null), 2000)" class="fixed-top text-white bg-success p-1 text-center">
               <i class="bi bi-check-circle-fill"></i>  {{ $success_message }}
             </div>
         @endif
-
+        {{-- errror --}}
+        @if ($error_message)
+            <div x-data x-init="setTimeout(() => $wire.set('error_message', null), 2000)" class="fixed-top text-white bg-danger p-1 text-center">
+              <i class="bi bi-check-circle-fill"></i>  {{ $error_message }}
+            </div>
+        @endif
+            {{-- bottom buttons --}}
         <div class="fixed-bottom p-3 bg-dsbl">
             <div class="row">
 
