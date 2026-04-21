@@ -22,7 +22,7 @@ new class extends Component {
              $quantity_per_item = 1;
             $barcode_service = new BarcodeService();
             $wc = new WooCommerceService();
-             $barcode_decode = $barcode_service->decodeBarcode('2800129003122');
+             $barcode_decode = $barcode_service->decodeBarcode($this->barcode);
             // get product details
             $product_code = $barcode_decode['product_code'];
             $weight_in_kg = $barcode_decode['weight_in_kg'];
