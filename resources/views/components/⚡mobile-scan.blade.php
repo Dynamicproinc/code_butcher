@@ -10,7 +10,7 @@ use App\Models\ProductVariation;
 new class extends Component {
     public $barcode;
     public $product_name;
-    public $product;
+    // public $product;
 
 
     public function setCode($barcode)
@@ -28,7 +28,7 @@ new class extends Component {
             $weight = $barcode_decode['weight'];
 
              if ($product = Product::where('product_code', $product_code)->first()) {
-                $this->product = $product;
+                $this->product_name = $product->product_name;
              }
 
     }
@@ -57,8 +57,8 @@ new class extends Component {
                         </div>
                     </div>
                     <div class="p-2 bg-light">
-                       @if($product)
-                        <h6> {{ $product->name  }}- 0.355 kg - <strong>0.340 kg</strong></h6>
+                       @if($product_name)
+                        <h6> {{ $product_name  }}- 0.355 kg - <strong>0.340 kg</strong></h6>
                        @else
                        <h6>No product scanned</h6>
                        @endif
