@@ -39,9 +39,12 @@ new class extends Component {
             $weight = $barcode_decode['weight'];
             
 
-            //  $product = Product::where('product_code', $product_code)->first();
-            //     $this->product_name = $product->product_name;
-                $this->weight = $weight;
+            $product = Product::where('product_code', $product_code)->first();
+            if($product){
+                 $this->product_name = $product->product_name;
+                    $this->weight = $weight;
+
+            }
                 
     }
 };
