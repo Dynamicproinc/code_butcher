@@ -19,11 +19,11 @@ new class extends Component {
         $this->stock_transactions = StockTransaction::latest()->where('type', 'OUT')->whereDate('created_at', today())->limit(20)->get();
     }
 
-    public function getBarcode($value)
-    {
-        $this->barcode = $value;
-        $this->add();
-    }
+    // public function getBarcode($value)
+    // {
+    //     $this->barcode = $value;
+    //     $this->add();
+    // }
 
     public function add()
     {
@@ -91,7 +91,7 @@ new class extends Component {
                   <script src="https://unpkg.com/html5-qrcode"></script>
 
 <div id="reader" style="width:300px; "></div>
-<h2>scan</h2>
+
 
 <script>
 function onScanSuccess(decodedText, decodedResult) {
@@ -119,65 +119,6 @@ const html5QrcodeScanner = new Html5QrcodeScanner(
 
 html5QrcodeScanner.render(onScanSuccess, onScanFailure);
 </script>
-
-                    {{-- <script src="https://unpkg.com/html5-qrcode"></script>
-
-                    <div id="reader" style="width:300px"></div>
-                    
-                    
-                    <script>
-                        
-                        const html5QrCode = new Html5Qrcode("reader");
-
-                        let isScanning = false; // 🔒 lock to prevent duplicates
-
-                        function onScanSuccess(decodedText) {
-                            if (isScanning) return; // 🚫 ignore duplicates
-                            isScanning = true;
-
-                            // alert(`Scanned: ${decodedText}`); // ✅ Show scanned code
-
-                            // ✅ Put value into input (optional)
-                          
-
-                            //set values to livewire component input and trigger add method
-                               $wire.getBarcode(decodedText);
-                            // ✅ Stop camera immediately
-                            // html5QrCode.stop().then(() => {
-
-                            //     // ✅ Clear camera UI
-                            //     html5QrCode.clear();
-
-                            //     // ✅ Hide scanner div
-                            //     document.getElementById("reader").style.display = "none";
-
-                            //     console.log("Scanner stopped & hidden");
-
-                            // }).catch(err => {
-                            //     console.error("Stop failed:", err);
-                            // });
-                        }
-
-                        // Start scanner
-                        Html5Qrcode.getCameras().then(devices => {
-
-                            // Try to find back camera
-                            let backCamera = devices.find(device =>
-                                device.label.toLowerCase().includes("back") ||
-                                device.label.toLowerCase().includes("rear")
-                            );
-
-                            let cameraId = backCamera ? backCamera.id : devices[0].id;
-
-                            html5QrCode.start(
-                                cameraId, {
-                                    fps: 10,
-                                    qrbox: 250
-                                },
-                                onScanSuccess
-                            );
-                        });
-                    </script> --}}
 
 
                 </div>
