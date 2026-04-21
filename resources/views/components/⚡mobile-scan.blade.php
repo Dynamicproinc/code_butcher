@@ -10,7 +10,7 @@ use App\Models\ProductVariation;
 new class extends Component {
     public $barcode;
     public $product_name;
-    public $weight;
+    public $variation_weight;
     // public $product;
 
 
@@ -19,7 +19,7 @@ new class extends Component {
         $this->barcode = $barcode;
         // // search the product :
        
-            $quantity_per_item = 1;
+             $quantity_per_item = 1;
             $barcode_service = new BarcodeService();
             $wc = new WooCommerceService();
              $barcode_decode = $barcode_service->decodeBarcode('2800129003122');
@@ -32,7 +32,8 @@ new class extends Component {
             $product = Product::where('product_code', $product_code)->first();
             if($product){
                  $this->product_name = $product->product_name;
-                    $this->weight = $weight;
+                 
+                $this->variation_weight =  $weight - ($weight % $product->threshold);
 
             }
              
@@ -44,7 +45,8 @@ new class extends Component {
 
     public function add() {
         
-        
+       
+
                 
     }
 };
