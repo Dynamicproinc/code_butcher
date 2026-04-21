@@ -117,6 +117,42 @@ new class extends Component {
         $this->variation_weight = '';
         $this->product_name = '';
     }
+
+    public function removeItem($key)
+    {
+        $cart_items = session('cart_items_for_dispatch', []);
+        if (isset($cart_items[$key])) {
+            unset($cart_items[$key]);
+            session(['cart_items_for_dispatch' => array_values($cart_items)]);
+        }
+    }
+     public function increment($id)
+    {
+        $cart_items = session('cart_items_for_dispatch', []);
+        if (isset($cart_items[$id])) {
+            // dd( $cart_items[$id]['quantity']);
+            $cart_items[$id]['quantity'] = $cart_items[$id]['quantity'] + 1;
+            session(['cart_items_for_dispatch' => array_values($cart_items)]);
+        }
+        // foreach($cart_items as $key => $item){
+
+        // }
+    }
+    public function decrement($id)
+    {
+        $cart_items = session('cart_items_for_dispatch', []);
+        if (isset($cart_items[$id])) {
+            // dd( $cart_items[$id]['quantity']);
+            $cart_items[$id]['quantity'] = $cart_items[$id]['quantity'] - 1;
+            if ($cart_items[$id]['quantity'] <= 0) {
+                $cart_items[$id]['quantity'] = 1;
+            }
+            session(['cart_items_for_dispatch' => array_values($cart_items)]);
+        }
+        // foreach($cart_items as $key => $item){
+
+        // }
+    }
 };
 ?>
 
@@ -177,13 +213,17 @@ new class extends Component {
                                                 <div class="small text-muted fw-bold">{{ $item['variation'] }}</div>
                                             </div>
                                             <div class="col-5">
-                                                <button class="btn btn-sm btn-outline-primary m-2">-</button>
-                                                <strong style="width:50px;text-align:center">{{ $item['quantity'] }}</strong>
-                                                <button class="btn btn-sm btn-outline-primary m-2">+</button>
+                                                <button class="btn btn-sm btn-outline-primary m-2"
+                                                    wire:click="decrement({{ $key }})">-</button>
+                                                <strong
+                                                    style="width:50px;text-align:center">{{ $item['quantity'] }}</strong>
+                                                <button class="btn btn-sm btn-outline-primary m-2"
+                                                    wire:click="increment({{ $key }})">+</button>
                                             </div>
                                             <div class="col-2">
-                                                <button class="btn btn-default text-danger"><i
-                                                        class="bi bi-trash3-fill"></i></button>
+                                                <button class="btn btn-default text-danger" wire:confirm="{{__('Are you sure?')}}" wire:click="removeItem('{{ $key }}')">
+                                                    <i class="bi bi-trash3-fill"></i>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
