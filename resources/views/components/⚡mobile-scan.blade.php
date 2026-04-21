@@ -19,17 +19,7 @@ new class extends Component {
         $this->barcode = $barcode;
         // // search the product :
        
-            
-             
-
-             
-
-
-    }
-
-    public function add() {
-        
-        $quantity_per_item = 1;
+            $quantity_per_item = 1;
             $barcode_service = new BarcodeService();
             $wc = new WooCommerceService();
              $barcode_decode = $barcode_service->decodeBarcode($this->barcode);
@@ -45,6 +35,16 @@ new class extends Component {
                     $this->weight = $weight;
 
             }
+             
+
+             
+
+
+    }
+
+    public function add() {
+        
+        
                 
     }
 };
@@ -71,7 +71,7 @@ new class extends Component {
                     </div>
                     <div class="p-2 bg-light">
                       
-                        <h6> {{ $product_name  }}- 0.355 kg - <strong>{{ $weight }} kg</strong></h6>
+                        <h6> {{ $product_name  }} -  <strong>{{ $weight }} kg</strong></h6>
                        
                     </div>
                 </div>
