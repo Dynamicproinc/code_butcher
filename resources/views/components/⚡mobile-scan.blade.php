@@ -162,7 +162,7 @@ new class extends Component {
         <div>
              
 
-            <div  class="camera mb-3">
+            <div  class="camera mb-3" git:ignore>
                 <div id="reader" style="width:350px;"></div>
                 
             </div>
