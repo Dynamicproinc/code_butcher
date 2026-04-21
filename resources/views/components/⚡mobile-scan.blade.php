@@ -70,10 +70,10 @@ new class extends Component {
                        
                     </div>
                     <div class="p-2 bg-light">
-                      <div class="row">
+                      <div class="row align-items-center">
                         <div class="col-8">
-                             <div class="p-2">
-                                <h6> {{ $product_name  }} -  <strong>{{ $variation_weight }}</strong></h6>
+                             <div class="">
+                                <h6> {{ $product_name ?? 'No product' }} -  <strong>{{ $variation_weight }}</strong></h6>
                              </div>
                         </div>
                          <div class="col-4">
