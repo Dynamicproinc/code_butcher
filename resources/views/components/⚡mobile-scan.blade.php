@@ -126,7 +126,7 @@ new class extends Component {
             session(['cart_items_for_dispatch' => array_values($cart_items)]);
         }
     }
-     public function increment($id)
+    public function increment($id)
     {
         $cart_items = session('cart_items_for_dispatch', []);
         if (isset($cart_items[$id])) {
@@ -157,54 +157,56 @@ new class extends Component {
 ?>
 
 <div>
+    <div class="camera mb-3">
+        <div id="reader" style="width:350px;"></div>
+        <script src="https://unpkg.com/html5-qrcode"></script>
+        <script>
+            function onScanSuccess(decodedText, decodedResult) {
+
+                // Handle on success condition with the decoded text or result.
+                 console.log(`Scan result: ${decodedText}`, decodedResult);
+                // document.getElementById('barcode-result').innerText = `Scan result: ${decodedText}`;
+                //set wire:model value
+                 $wire.setCode(decodedText);
+                // html5QrcodeScanner.clear();
+            }
+
+            function onScanFailure(error) {
+                console.warn(`Code scan error = ${error}`);
+                // document.getElementById('barcode-result').innerText = `Scan error: ${error}`;
+            }
+
+            const html5QrcodeScanner = new Html5QrcodeScanner(
+                "reader", {
+                    fps: 10,
+                    qrbox: 250,
+                    formatsToSupport: [
+                        Html5QrcodeSupportedFormats.CODE_128,
+                        Html5QrcodeSupportedFormats.EAN_13,
+                        Html5QrcodeSupportedFormats.EAN_8,
+                        Html5QrcodeSupportedFormats.UPC_A,
+                        Html5QrcodeSupportedFormats.UPC_E
+                    ]
+                }
+            );
+
+            html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+        </script>
+    </div>
     <div>
         {{-- for camera --}}
         <div>
-             
 
-            <div  class="camera mb-3" git:ignore>
-                <div id="reader" style="width:350px;"></div>
-                
-            </div>
-            <script src="https://unpkg.com/html5-qrcode"></script>
-            <script>
-                function onScanSuccess(decodedText, decodedResult) {
-                    
-                    // Handle on success condition with the decoded text or result.
-                    console.log(`Scan result: ${decodedText}`, decodedResult);
-                    // document.getElementById('barcode-result').innerText = `Scan result: ${decodedText}`;
-                    //set wire:model value
-                    $wire.setCode(decodedText);
-                    // html5QrcodeScanner.clear();
-                }
 
-                function onScanFailure(error) {
-                   console.warn(`Code scan error = ${error}`);
-                    // document.getElementById('barcode-result').innerText = `Scan error: ${error}`;
-                }
 
-                const html5QrcodeScanner = new Html5QrcodeScanner(
-                    "reader", {
-                        fps: 10,
-                        qrbox: 250,
-                        formatsToSupport: [
-                            Html5QrcodeSupportedFormats.CODE_128,
-                            Html5QrcodeSupportedFormats.EAN_13,
-                            Html5QrcodeSupportedFormats.EAN_8,
-                            Html5QrcodeSupportedFormats.UPC_A,
-                            Html5QrcodeSupportedFormats.UPC_E
-                        ]
-                    }
-                );
 
-                html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-            </script>
 
             <div class="container">
                 <div class="">
                     <div class=" mb-3">
                         <div class="">
-                            <input type="text" class="form-control form-control-lg" wire:model="barcode" placeholder="{{ __('Enter Barcode') }}" autofocus readonly>
+                            <input type="text" class="form-control form-control-lg" wire:model="barcode"
+                                placeholder="{{ __('Enter Barcode') }}" autofocus readonly>
                         </div>
 
                     </div>
@@ -220,7 +222,8 @@ new class extends Component {
                                 </div>
                             </div>
                             <div class="col-4">
-                                <button class="btn btn-primary w-100 btn-lg" wire:click="add">{{ __('Add') }}</button>
+                                <button class="btn btn-primary w-100 btn-lg"
+                                    wire:click="add">{{ __('Add') }}</button>
                             </div>
                         </div>
 
@@ -256,7 +259,9 @@ new class extends Component {
                                                     wire:click="increment({{ $key }})">+</button>
                                             </div>
                                             <div class="col-2">
-                                                <button class="btn btn-default text-danger" wire:confirm="{{__('Are you sure?')}}" wire:click="removeItem('{{ $key }}')">
+                                                <button class="btn btn-default text-danger"
+                                                    wire:confirm="{{ __('Are you sure?') }}"
+                                                    wire:click="removeItem('{{ $key }}')">
                                                     <i class="bi bi-trash3-fill"></i>
                                                 </button>
                                             </div>
@@ -281,7 +286,7 @@ new class extends Component {
             </div>
 
 
-           
+
 
 
         </div>
@@ -289,12 +294,12 @@ new class extends Component {
 
         <div class="fixed-bottom p-3 bg-dsbl">
             <div class="row">
-                
+
                 <div class="col-4">
-                    <button class="btn btn-default btn-lg w-100">{{__('Cancel')}}</button>
+                    <button class="btn btn-default btn-lg w-100">{{ __('Cancel') }}</button>
                 </div>
                 <div class="col-8">
-                    <button class="btn btn-primary btn-lg w-100">{{__('Update WC')}}</button>
+                    <button class="btn btn-primary btn-lg w-100">{{ __('Update WC') }}</button>
                 </div>
             </div>
         </div>
