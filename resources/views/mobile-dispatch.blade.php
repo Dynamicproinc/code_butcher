@@ -9,10 +9,14 @@
     .camera{
         width: 100%;
         /* height: 300px; */
-        height: auto;
+        height: 300px;
+        background: #000;
     }
     #html5-qrcode-button-camera-stop{
         display: none !important;
+    }
+    #reader__dashboard_section{
+      display: none !important;
     }
    </style>
     @livewireScripts

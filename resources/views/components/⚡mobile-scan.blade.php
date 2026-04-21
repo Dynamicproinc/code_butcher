@@ -63,8 +63,8 @@ new class extends Component {
         <div >
 
 
-           <div wire:ignore>
-             <div id="reader" class="camera mb-3"></div>
+           <div wire:ignore class="camera mb-3">
+             <div id="reader" class=""></div>
            </div>
             <div class="container">
                 <div class="">
@@ -79,7 +79,7 @@ new class extends Component {
                         <div class="col-8">
                              <div class="">
                                @if($find_product)
-                                <h6> {{ $product_name ?? 'No product' }} -  <strong>{{ $variation_weight }}</strong></h6>
+                                <h6 class="text-uppercase"> {{ $product_name ?? 'No product' }} -  <strong>{{ $variation_weight }}</strong></h6>
                                @endif
                              </div>
                         </div>
