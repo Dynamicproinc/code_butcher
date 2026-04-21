@@ -16,9 +16,7 @@ new class extends Component {
     {
         $this->barcode = $barcode;
         // search the product :
-         $this->validate([
-                'barcode' => 'required|digits:13',
-            ]);
+       
             $quantity_per_item = 1;
             $barcode = new BarcodeService();
             $wc = new WooCommerceService();
