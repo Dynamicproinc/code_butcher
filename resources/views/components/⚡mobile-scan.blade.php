@@ -17,13 +17,13 @@ new class extends Component {
 
     public function setCode($barcode)
     {
-        $this->barcode = $barcode;
+       
         // // search the product :
        
              $quantity_per_item = 1;
             $barcode_service = new BarcodeService();
             $wc = new WooCommerceService();
-             $barcode_decode = $barcode_service->decodeBarcode($this->barcode);
+             $barcode_decode = $barcode_service->decodeBarcode($barcode);
             // get product details
             $product_code = $barcode_decode['product_code'];
             $weight_in_kg = $barcode_decode['weight_in_kg'];
@@ -36,6 +36,7 @@ new class extends Component {
                  $this->product_name = $product->product_name;
                  
                 $this->variation_weight =  $weight - ($weight % $product->threshold);
+                 $this->barcode = $barcode;
 
             }else{
 
@@ -50,7 +51,84 @@ new class extends Component {
 
     public function add() {
         
+       $this->error_message = '';
+
        
+        $barcode = new BarcodeService();
+        $barcode_decode = $barcode->decodeBarcode($this->barcode);
+        // get product details
+        $product_code = $barcode_decode['product_code'];
+        $weight_in_kg = $barcode_decode['weight_in_kg'];
+        $weight = $barcode_decode['weight'];
+        if ($product = Product::where('product_code', $product_code)->first()) {
+            // existing quantity validation
+
+            // now if product has variation
+            $variation = '0';
+            if ($product->variation) {
+                $variation = $weight - ($weight % $product->threshold);
+
+              
+
+                $cartItems = session()->get('cart_items_for_dispatch', []);
+                $found = false;
+
+                foreach ($cartItems as $key => $item) {
+                    if ($item['variation'] == $variation) {
+                        $cartItems[$key]['quantity'] += 1;
+                        $cartItems[$key]['weight'] += $weight_in_kg;
+                        $found = true;
+                        break;
+                    }
+                }
+                if (!$found) {
+                    $cartItems[] = [
+                        'barcode' => $this->barcode,
+                        'code' => $product->product_code,
+                        'description' => $product->product_name,
+                        'variation' => $variation,
+                        'quantity' => 1,
+                        'weight' => $weight_in_kg,
+                    ];
+                }
+
+                session()->put('cart_items_for_dispatch', $cartItems);
+            } else {
+                //if dont have variation product
+
+                $citems = session()->get('cart_items_for_dispatch', []);
+                $found_item = false;
+
+                foreach ($citems as $key => $item) {
+                    if ($item['code'] == $product_code) {
+                        $citems[$key]['quantity'] += 1;
+                        $citems[$key]['weight'] += $weight_in_kg;
+                        $found_item = true;
+                        break;
+                    }
+                }
+
+                if (!$found_item) {
+                    $citems[] = [
+                        'barcode' => $this->barcode,
+                        'code' => $product->product_code,
+                        'description' => $product->product_name,
+                        'variation' => $variation,
+                        'quantity' => 1,
+                        'weight' => $weight_in_kg,
+                    ];
+                }
+
+                session()->put('cart_items_for_dispatch', $citems);
+            }
+        } else {
+            $this->error_message = __('Invalid Barcode');
+        }
+
+        $this->barcode = '';
+            $this->find_product = false;
+            $this->variation_weight = '';
+            $this->product_name = '';
 
                 
     }
@@ -90,6 +168,56 @@ new class extends Component {
                        
                        
                     </div>
+                    {{-- table --}}
+                        <div class=" mb-5">
+            <table class="table table-sm table-striped table-responsive c-table">
+                <thead>
+                    <tr>
+                        <th scope="col">{{ __('BARCODE') }}</th>
+                        <th scope="col">{{ __('CODE') }}</th>
+                        <th scope="col">{{ __('DESC.') }}</th>
+                        <th scope="col">{{ __('VA.') }}</th>
+                        <th scope="col">{{ __('QUANTITY') }}</th>
+                        {{-- <th scope="col">{{ __('WEIGHT') }}</th> --}}
+                        <th scope="col"></th>
+
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @if (session('cart_items_for_dispatch', []))
+                        @foreach (session('cart_items_for_dispatch') as $key => $item)
+                            <tr>
+
+                                <td>{{ $item['barcode'] }}</td>
+                                <td>{{ $item['code'] }}</td>
+                                <td>{{ $item['description'] }}</td>
+                                <td>{{ $item['variation'] }}</td>
+                                <td>{{ $item['quantity'] }}</td>
+                                {{-- <td>{{ $item['weight'] }}</td> --}}
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary"
+                                        wire:click="decrement({{ $key }})">-</button>
+                                    <button class="btn btn-sm btn-outline-primary"
+                                        wire:click="increment({{ $key }})">+</button>
+                                    <button class="btn btn-sm btn-outline-danger"
+                                        wire:click="removeItem('{{ $key }}')">{{ __('Remove') }}</button>
+                                </td>
+
+                            </tr>
+                        @endforeach
+                    @else
+                        <tr>
+                            <td colspan="7" class="text-center">{{ __('No items added yet.') }}</td>
+                        </tr>
+                    @endif
+
+
+                </tbody>
+            </table>
+
+        </div>
+                    {{-- end table --}}
                 </div>
             </div>
 
