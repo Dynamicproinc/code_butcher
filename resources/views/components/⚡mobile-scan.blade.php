@@ -11,6 +11,7 @@ new class extends Component {
     public $barcode;
     public $product_name;
     public $variation_weight;
+    public $find_product = false;
     // public $product;
 
 
@@ -31,11 +32,13 @@ new class extends Component {
 
             $product = Product::where('product_code', $product_code)->first();
             if($product){
+                $this->find_product = true;
                  $this->product_name = $product->product_name;
                  
                 $this->variation_weight =  $weight - ($weight % $product->threshold);
 
             }
+            $this->find_product = false;
              
 
              
@@ -73,7 +76,9 @@ new class extends Component {
                       <div class="row align-items-center">
                         <div class="col-8">
                              <div class="">
+                               @if($find_product)
                                 <h6> {{ $product_name ?? 'No product' }} -  <strong>{{ $variation_weight }}</strong></h6>
+                               @endif
                              </div>
                         </div>
                          <div class="col-4">
