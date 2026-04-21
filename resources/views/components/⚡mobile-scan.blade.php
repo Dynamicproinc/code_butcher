@@ -194,7 +194,7 @@ new class extends Component {
                     {{-- table --}}
 
                     <div>
-                        <div class="item-details">
+                        <div class="item-details p-2">
                             @if (session('cart_items_for_dispatch', []))
 
                                 @foreach (session('cart_items_for_dispatch') as $key => $item)
@@ -206,7 +206,7 @@ new class extends Component {
                                             <span
                                                 class="badge text-bg-primary rounded-pill">{{ $item['quantity'] }}</span>
                                         </li> --}}
-                                    <div class="rounded-4 bg-white shadow p-2 p-3 my-3">
+                                    <div class="rounded-4 bg-white shadow p-2 px-3 my-3">
                                         <div class="row align-items-center">
                                             <div class="col-5">
                                                 <div class="fw-bold text-uppercase">{{ $item['description'] }}</div>
