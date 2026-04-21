@@ -57,11 +57,9 @@ new class extends Component {
                         </div>
                     </div>
                     <div class="p-2 bg-light">
-                       @if($product_name)
+                      
                         <h6> {{ $product_name  }}- 0.355 kg - <strong>0.340 kg</strong></h6>
-                       @else
-                       <h6>No product scanned</h6>
-                       @endif
+                       
                     </div>
                 </div>
             </div>
