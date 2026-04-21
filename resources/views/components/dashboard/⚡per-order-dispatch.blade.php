@@ -88,7 +88,30 @@ new class extends Component {
             <div class="mb-3">
 
                 <div>
+                    <script src="https://unpkg.com/html5-qrcode"></script>
 
+<div id="reader" style="width:300px;"></div>
+
+<script>
+function onScanSuccess(decodedText, decodedResult) {
+    alert("Scanned: " + decodedText);
+
+    // optional: stop scanning after first success
+    html5QrcodeScanner.clear();
+}
+
+function onScanFailure(error) {
+    // you can ignore scan errors or log them
+    // console.warn(error);
+}
+
+let html5QrcodeScanner = new Html5QrcodeScanner(
+    "reader",
+    { fps: 10, qrbox: 250 }
+);
+
+html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+</script>
 
                     {{-- <script src="https://unpkg.com/html5-qrcode"></script>
 
