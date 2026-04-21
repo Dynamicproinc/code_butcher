@@ -90,7 +90,8 @@ new class extends Component {
                 <div>
                   <script src="https://unpkg.com/html5-qrcode"></script>
 
-<div id="reader" style="width:300px;"></div>
+<div id="reader" style="width:300px; "></div>
+<h2>scan</h2>
 
 <script>
 function onScanSuccess(decodedText, decodedResult) {
