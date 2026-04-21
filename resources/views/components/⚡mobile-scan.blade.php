@@ -17,18 +17,18 @@ new class extends Component {
         $this->barcode = $barcode;
         // // search the product :
        
-        //     $quantity_per_item = 1;
-        //     $barcode = new BarcodeService();
-        //     $wc = new WooCommerceService();
-        //      $barcode_decode = $barcode->decodeBarcode($this->barcode);
-        //     // get product details
-        //     $product_code = $barcode_decode['product_code'];
-        //     $weight_in_kg = $barcode_decode['weight_in_kg'];
-        //     $weight = $barcode_decode['weight'];
+            $quantity_per_item = 1;
+            $barcode = new BarcodeService();
+            $wc = new WooCommerceService();
+             $barcode_decode = $barcode->decodeBarcode($this->barcode);
+            // get product details
+            $product_code = $barcode_decode['product_code'];
+            $weight_in_kg = $barcode_decode['weight_in_kg'];
+            $weight = $barcode_decode['weight'];
 
-        //      if ($product = Product::where('product_code', $product_code)->first()) {
-        //         $this->product_name = $product->product_name;
-        //      }
+             if ($product = Product::where('product_code', $product_code)->first()) {
+                $this->product_name = $product->product_name;
+             }
 
     }
 
@@ -56,7 +56,9 @@ new class extends Component {
                         </div>
                     </div>
                     <div class="p-2 bg-light">
-                        <h6> - 0.355 kg - <strong>0.340 kg</strong></h6>
+                       @if($product_name)
+                        <h6> {{ $product_name  }}- 0.355 kg - <strong>0.340 kg</strong></h6>
+                       @endif
                     </div>
                 </div>
             </div>
@@ -67,7 +69,7 @@ new class extends Component {
                 function onScanSuccess(decodedText, decodedResult) {
                     // Handle on success condition with the decoded text or result.
                     console.log(`Scan result: ${decodedText}`, decodedResult);
-                    document.getElementById('barcode-result').innerText = `Scan result: ${decodedText}`;
+                    // document.getElementById('barcode-result').innerText = `Scan result: ${decodedText}`;
                     //set wire:model value
                     $wire.setCode(decodedText);
                 }
