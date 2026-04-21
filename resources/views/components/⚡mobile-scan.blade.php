@@ -1,16 +1,40 @@
 <?php
 
 use Livewire\Component;
+use App\Models\StockTransaction;
+use App\Services\BarcodeService;
+use App\Services\WooCommerceService;
+use App\Models\Product;
+use App\Models\ProductVariation;
 
 new class extends Component {
-
     public $barcode;
+    public $product_name;
 
-    public function setCode($barcode) {
+
+    public function setCode($barcode)
+    {
         $this->barcode = $barcode;
+        // search the product :
+         $this->validate([
+                'barcode' => 'required|digits:13',
+            ]);
+            $quantity_per_item = 1;
+            $barcode = new BarcodeService();
+            $wc = new WooCommerceService();
+             $barcode_decode = $barcode->decodeBarcode($this->barcode);
+            // get product details
+            $product_code = $barcode_decode['product_code'];
+            $weight_in_kg = $barcode_decode['weight_in_kg'];
+            $weight = $barcode_decode['weight'];
+
+             if ($product = Product::where('product_code', $product_code)->first()) {
+                $this->product_name = $product->product_name;
+             }
+
     }
 
-    public function add(){
+    public function add() {
 
     }
 };
@@ -20,21 +44,25 @@ new class extends Component {
     <div>
         {{-- for camera --}}
         <div wire:ignore>
-            
+
 
             <div id="reader" class="camera mb-3"></div>
             <div class="container">
-                <div class="row">
-                <div class="col-8">
-                    <input type="text" class="form-control form-control-lg" wire:model="barcode">
-                </div>
-                <div class="col-4">
-                    <button class="btn btn-primary w-100 btn-lg">ADD</button>
+                <div class="">
+                    <div class="row mb-3">
+                        <div class="col-8">
+                            <input type="text" class="form-control form-control-lg" wire:model="barcode">
+                        </div>
+                        <div class="col-4">
+                            <button class="btn btn-primary w-100 btn-lg">ADD</button>
+                        </div>
+                    </div>
+                    <div class="p-2 bg-light">
+                        <h6>{{ $product->name ?? 'unknown' }} - 0.355 kg - <strong>0.340 kg</strong></h6>
+                    </div>
                 </div>
             </div>
-            <p id="barcode-result"></p>
-            </div>
-            
+
 
             <script src="https://unpkg.com/html5-qrcode"></script>
             <script>
@@ -43,7 +71,7 @@ new class extends Component {
                     console.log(`Scan result: ${decodedText}`, decodedResult);
                     document.getElementById('barcode-result').innerText = `Scan result: ${decodedText}`;
                     //set wire:model value
-                     $wire.setCode(decodedText);
+                    $wire.setCode(decodedText);
                 }
 
                 function onScanFailure(error) {
