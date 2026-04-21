@@ -87,7 +87,7 @@ new class extends Component {
         <div class="">
             <div class="mb-3">
 
-                <div>
+                <div wire:ignore>
                   <script src="https://unpkg.com/html5-qrcode"></script>
 
 <div id="reader" style="width:300px; "></div>
@@ -99,7 +99,8 @@ function onScanSuccess(decodedText, decodedResult) {
     // Handle on success condition with the decoded text or result.
     console.log(`Scan result: ${decodedText}`, decodedResult);
     document.getElementById('barcode-result').innerText = `Scan result: ${decodedText}`;
-    // @this.getBarcode(decodedText);
+    //set wire:model value
+    $wire.getBarcode(decodedText);
 }
 
 function onScanFailure(error) {
@@ -127,7 +128,8 @@ html5QrcodeScanner.render(onScanSuccess, onScanFailure);
 
                 </div>
                 <input type="text" wire:model="barcode" class="form-control mb-2"
-                    placeholder="{{ __('Scan barcode here...') }}" wire:keydown.enter="add">
+                    placeholder="{{ __('Scan barcode here...') }}" >
+                    <button type="button" wire:click="add" class="btn btn-primary">Add</button>
 
             </div>
             <div style="height:40px">
