@@ -10,6 +10,7 @@ use App\Models\ProductVariation;
 new class extends Component {
     public $barcode;
     public $product_name;
+    public $weight;
     // public $product;
 
 
@@ -30,6 +31,7 @@ new class extends Component {
 
              $product = Product::where('product_code', $product_code)->first();
                 $this->product_name = $product->product_name;
+                $this->weight = $weight;
              
 
              
