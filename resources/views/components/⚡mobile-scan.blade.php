@@ -19,7 +19,16 @@ new class extends Component {
         $this->barcode = $barcode;
         // // search the product :
        
-            $quantity_per_item = 1;
+            
+             
+
+             
+
+
+    }
+
+    public function add() {
+        $quantity_per_item = 1;
             $barcode_service = new BarcodeService();
             $wc = new WooCommerceService();
              $barcode_decode = $barcode_service->decodeBarcode($this->barcode);
@@ -32,15 +41,6 @@ new class extends Component {
             //  $product = Product::where('product_code', $product_code)->first();
             //     $this->product_name = $product->product_name;
                 $this->weight = $weight;
-             
-
-             
-
-
-    }
-
-    public function add() {
-
     }
 };
 ?>
@@ -59,7 +59,7 @@ new class extends Component {
                             <input type="text" class="form-control form-control-lg" wire:model="barcode">
                         </div>
                         <div class="col-4">
-                            <button class="btn btn-primary w-100 btn-lg">ADD</button>
+                            <button class="btn btn-primary w-100 btn-lg" wire:click="add">ADD</button>
                         </div>
                     </div>
                     <div class="p-2 bg-light">
