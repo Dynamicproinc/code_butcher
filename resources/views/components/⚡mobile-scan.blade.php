@@ -294,8 +294,8 @@ new class extends Component {
         </div>
         {{-- eend camera --}}
         @if ($success_message)
-            <div x-data x-init="setTimeout(() => $wire.set('success_message', null), 2000)" class="fixed-top bg-success p-1 text-center">
-                {{ $success_message }}
+            <div x-data x-init="setTimeout(() => $wire.set('success_message', null), 2000)" class="fixed-top text-white bg-success p-1 text-center">
+              <i class="bi bi-check-circle-fill"></i>  {{ $success_message }}
             </div>
         @endif
 
