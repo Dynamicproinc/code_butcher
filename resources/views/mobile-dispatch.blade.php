@@ -12,6 +12,9 @@
         height: 300px ;
         background: #000;
         overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
     #html5-qrcode-button-camera-stop{
         display: none !important;
