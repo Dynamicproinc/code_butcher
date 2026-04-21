@@ -64,7 +64,7 @@ new class extends Component {
 
 
            <div wire:ignore class="camera mb-3">
-             <div id="reader" class=""></div>
+             <div id="reader" class="" style="width:100%; height:100%"></div>
            </div>
             <div class="container">
                 <div class="">
