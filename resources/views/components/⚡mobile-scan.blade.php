@@ -158,6 +158,42 @@ new class extends Component {
 
         // }
     }
+
+     public function update()
+    {
+        try {
+            $cart_items = session()->get('cart_items_for_dispatch', []);
+        $wc = new WooCommerceService();
+        foreach ($cart_items as $item) {
+            $product = Product::where('product_code', $item['code'])->first();
+            if ($product) {
+                // check product has variation
+                if ($product->variation) {
+                    $v = ProductVariation::where('wc_product_id', $product->wc_product_id)->where('variation_code', $item['variation'])->first();
+
+                    if ($v) {
+                        $wc->dispatchStock($v->wc_product_id, $v->wc_variation_id, $item['quantity']);
+                        $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update success.');
+                        // $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update success.');
+                    } else {
+                        $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update faild.');
+                    }
+                } else {
+                    $wc->dispatchStock($product->wc_product_id, null, $item['quantity']);
+                    $product->quantity -= $item['quantity'];
+                    $product->save();
+                    $this->writeLog("Product ID: {$item['code']} Variation ID: " . ($item['variation'] ?? 0) . ' Update success.');
+                }
+            } else {
+                $this->writeLog("Product ID: {$item['code']} Variation ID: " . ($item['variation'] ?? 0) . ' Update failed.');
+            }
+            session()->forget('cart_items_for_dispatch');
+        }
+        } catch (\Throwable $th) {
+            //  $this->client_message = $th->getMessage();
+              $this->error_message = __('Request failed. Please try again.');
+        }
+    }
 };
 ?>
 
