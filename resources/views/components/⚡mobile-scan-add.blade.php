@@ -129,7 +129,7 @@ new class extends Component {
         $this->product_name = '';
         $this->success_message = 'Item added';
 
-       $this->dispatch('start-qr-scanner');
+       
     }
 
     function writeLog($message)
@@ -247,7 +247,6 @@ new class extends Component {
         <script>
             let lastScanned = null;
             let scanLock = false;
-            let html5QrcodeScanner;
 
             function onScanSuccess(decodedText, decodedResult) {
 
@@ -255,7 +254,7 @@ new class extends Component {
                 
                
                 $wire.setCode(decodedText);
-                 html5QrcodeScanner.clear();
+                 
               
             }
 
@@ -268,25 +267,7 @@ new class extends Component {
 
             
 
-            // const html5QrcodeScanner = new Html5QrcodeScanner(
-            //     "reader", {
-            //         fps: 10,
-            //         qrbox: 250,
-            //         formatsToSupport: [
-            //             Html5QrcodeSupportedFormats.CODE_128,
-            //             Html5QrcodeSupportedFormats.EAN_13,
-            //             Html5QrcodeSupportedFormats.EAN_8,
-            //             Html5QrcodeSupportedFormats.UPC_A,
-            //             Html5QrcodeSupportedFormats.UPC_E
-            //         ]
-            //     }
-            // );
-
-            // html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-
-            function startScanner() {
-    if (!html5QrcodeScanner) {
-        const html5QrcodeScanner = new Html5QrcodeScanner(
+            const html5QrcodeScanner = new Html5QrcodeScanner(
                 "reader", {
                     fps: 10,
                     qrbox: 250,
@@ -299,19 +280,11 @@ new class extends Component {
                     ]
                 }
             );
-    }
 
-    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-}
+            html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+
+            
         </script>
-
-        <script>
-document.addEventListener('livewire:init', () => {
-    Livewire.on('start-qr-scanner', () => {
-        startScanner();
-    });
-});
-</script>
         
     </div>
     <div>
