@@ -38,8 +38,7 @@ new class extends Component {
             $this->barcode = $barcode;
         } else {
             $this->find_product = false;
-            $this->error_message = "Not registered barcode";
-
+            $this->error_message = 'Not registered barcode';
         }
     }
 
@@ -159,48 +158,48 @@ new class extends Component {
         // }
     }
 
-    public function cancel(){
-        session()->forget('cart_items_for_dispatch');
-         $this->success_message = __('Dispatch cancelled');
-    }
-     public function update()
+    public function cancel()
     {
-       if(!session('cart_items_for_dispatch', [])){
-        
-         $this->error_message = __('No items to update');
-         return null;
-       }
+        session()->forget('cart_items_for_dispatch');
+        $this->success_message = __('Dispatch cancelled');
+    }
+    public function update()
+    {
+        if (!session('cart_items_for_dispatch', [])) {
+            $this->error_message = __('No items to update');
+            return null;
+        }
         try {
             $cart_items = session()->get('cart_items_for_dispatch', []);
-        $wc = new WooCommerceService();
-        foreach ($cart_items as $item) {
-            $product = Product::where('product_code', $item['code'])->first();
-            if ($product) {
-                // check product has variation
-                if ($product->variation) {
-                    $v = ProductVariation::where('wc_product_id', $product->wc_product_id)->where('variation_code', $item['variation'])->first();
+            $wc = new WooCommerceService();
+            foreach ($cart_items as $item) {
+                $product = Product::where('product_code', $item['code'])->first();
+                if ($product) {
+                    // check product has variation
+                    if ($product->variation) {
+                        $v = ProductVariation::where('wc_product_id', $product->wc_product_id)->where('variation_code', $item['variation'])->first();
 
-                    if ($v) {
-                        $wc->dispatchStock($v->wc_product_id, $v->wc_variation_id, $item['quantity']);
-                        $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update success.');
-                        // $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update success.');
+                        if ($v) {
+                            $wc->dispatchStock($v->wc_product_id, $v->wc_variation_id, $item['quantity']);
+                            $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update success.');
+                            // $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update success.');
+                        } else {
+                            $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update faild.');
+                        }
                     } else {
-                        $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update faild.');
+                        $wc->dispatchStock($product->wc_product_id, null, $item['quantity']);
+                        $product->quantity -= $item['quantity'];
+                        $product->save();
+                        $this->writeLog("Product ID: {$item['code']} Variation ID: " . ($item['variation'] ?? 0) . ' Update success.');
                     }
                 } else {
-                    $wc->dispatchStock($product->wc_product_id, null, $item['quantity']);
-                    $product->quantity -= $item['quantity'];
-                    $product->save();
-                    $this->writeLog("Product ID: {$item['code']} Variation ID: " . ($item['variation'] ?? 0) . ' Update success.');
+                    $this->writeLog("Product ID: {$item['code']} Variation ID: " . ($item['variation'] ?? 0) . ' Update failed.');
                 }
-            } else {
-                $this->writeLog("Product ID: {$item['code']} Variation ID: " . ($item['variation'] ?? 0) . ' Update failed.');
+                session()->forget('cart_items_for_dispatch');
             }
-            session()->forget('cart_items_for_dispatch');
-        }
         } catch (\Throwable $th) {
             //  $this->client_message = $th->getMessage();
-              $this->error_message = __('Request failed. Please try again.');
+            $this->error_message = __('Request failed. Please try again.');
         }
     }
 };
@@ -302,11 +301,13 @@ new class extends Component {
                                             </div>
                                             <div class="col-5">
                                                 <button class="btn btn-sm btn-outline-primary m-2"
-                                                    wire:click="decrement({{ $key }})"  wire:loading.attr="disabled" wire:target="update">-</button>
+                                                    wire:click="decrement({{ $key }})"
+                                                    wire:loading.attr="disabled" wire:target="update">-</button>
                                                 <strong
                                                     style="width:50px;text-align:center">{{ $item['quantity'] }}</strong>
                                                 <button class="btn btn-sm btn-outline-primary m-2"
-                                                    wire:click="increment({{ $key }})"  wire:loading.attr="disabled" wire:target="update">+</button>
+                                                    wire:click="increment({{ $key }})"
+                                                    wire:loading.attr="disabled" wire:target="update">+</button>
                                             </div>
                                             <div class="col-2">
                                                 <button class="btn btn-default text-danger"
@@ -344,28 +345,46 @@ new class extends Component {
         {{-- succeess --}}
         @if ($success_message)
             <div x-data x-init="setTimeout(() => $wire.set('success_message', null), 2000)" class="fixed-top text-white bg-success p-1 text-center">
-              <i class="bi bi-check-circle-fill"></i>  {{ $success_message }}
+                <i class="bi bi-check-circle-fill"></i> {{ $success_message }}
             </div>
         @endif
         {{-- errror --}}
         @if ($error_message)
             <div x-data x-init="setTimeout(() => $wire.set('error_message', null), 2000)" class="fixed-top text-white bg-danger p-1 text-center">
-              <i class="bi bi-exclamation-triangle-fill"></i>  {{ $error_message }}
+                <i class="bi bi-exclamation-triangle-fill"></i> {{ $error_message }}
             </div>
         @endif
-            {{-- bottom buttons --}}
+        {{-- bottom buttons --}}
         <div class="fixed-bottom p-3 bg-light">
             <div class="row">
 
                 <div class="col-4">
-                    <button class="btn btn-default  w-100" wire:click="cancel"  wire:loading.attr="disabled" wire:confirm="{{ __('Are you sure?') }}">{{ __('Cancel') }}</button>
+                    <button class="btn btn-default  w-100" wire:click="cancel" wire:loading.attr="disabled"
+                        wire:confirm="{{ __('Are you sure?') }}">{{ __('Cancel') }}</button>
                 </div>
                 <div class="col-8">
-                    <button class="btn btn-primary  w-100" wire:click="update"  wire:loading.attr="disabled" wire:confirm="{{ __('Are you sure?') }}">
+                    <button class="btn btn-primary  w-100" wire:click="update" wire:loading.attr="disabled"
+                        wire:confirm="{{ __('Are you sure?') }}">
                         {{ __('Update WC') }}
                     </button>
                 </div>
             </div>
         </div>
+        {{-- loading -modal --}}
+        <div class="loading-modal" wire:loading.flex wire:target="update">
+            <div class="loading-modal-content">
+                <div class="">
+                    <div class="text-center">
+                        <span class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </span>
+                        <p class="mb-0">Please wait...</p>
+                        <h5>Uploading data to WC server</h5>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{-- end loading modal --}}
     </div>
 </div>
