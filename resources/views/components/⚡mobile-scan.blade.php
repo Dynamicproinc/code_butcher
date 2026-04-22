@@ -167,9 +167,9 @@ new class extends Component {
 
         file_put_contents($file, $logMessage, FILE_APPEND);
 
-        $this->log[] = [
-            'status' => $logMessage,
-        ];
+        // $this->log[] = [
+        //     'status' => $logMessage,
+        // ];
     }
 
 
