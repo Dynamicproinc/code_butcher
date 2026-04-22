@@ -237,7 +237,8 @@ new class extends Component
         } catch (\Throwable $th) {
 
             // $this->client_message = $th->getMessage();
-            $this->client_message = 'The process could not be completed due to an issue connecting to the WooCommerce server.';
+            $this->error_message = 'Uploading failed, try again';
+             $this->writeLog('Error: ' . $th->getMessage());
          
         }
        

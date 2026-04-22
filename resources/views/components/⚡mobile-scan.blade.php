@@ -214,7 +214,8 @@ new class extends Component {
             }
         } catch (\Throwable $th) {
             //  $this->client_message = $th->getMessage();
-            $this->error_message = __('Request failed. Please try again.');
+            $this->error_message = __('Uploading failed. Please try again.');
+            $this->writeLog('Error: ' . $th->getMessage());
         }
     }
 };
