@@ -131,9 +131,10 @@ new class extends Component
         }
 
         $this->barcode = '';
+        $this->find_product = false;
         $this->variation_weight = '';
         $this->product_name = '';
-        $this->success_message = __('Item added');
+        $this->success_message = 'Item added';
     }
 
      function writeLog($message)
