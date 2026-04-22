@@ -131,6 +131,65 @@ new class extends Component
         }
 
         $this->barcode = '';
+        $this->success_message = __('Item added');
+    }
+
+     function writeLog($message)
+    {
+        $file = 'log.txt';
+
+        $time = date('Y-m-d H:i:s');
+
+        $logMessage = '[' . $time . '] ' . $message . PHP_EOL;
+
+        file_put_contents($file, $logMessage, FILE_APPEND);
+
+        $this->log[] = [
+            'status' => $logMessage,
+        ];
+    }
+
+     public function increment($id)
+    {
+        $cart_items = session('cart_items', []);
+        if (isset($cart_items[$id])) {
+            // dd( $cart_items[$id]['quantity']);
+            $cart_items[$id]['quantity'] = $cart_items[$id]['quantity'] + 1;
+            session(['cart_items' => array_values($cart_items)]);
+        }
+        // foreach($cart_items as $key => $item){
+
+        // }
+    }
+    public function decrement($id)
+    {
+        $cart_items = session('cart_items', []);
+        if (isset($cart_items[$id])) {
+            // dd( $cart_items[$id]['quantity']);
+            $cart_items[$id]['quantity'] = $cart_items[$id]['quantity'] - 1;
+            if ($cart_items[$id]['quantity'] <= 0) {
+                $cart_items[$id]['quantity'] = 1;
+            }
+            session(['cart_items' => array_values($cart_items)]);
+        }
+        // foreach($cart_items as $key => $item){
+
+        // }
+    }
+
+     public function removeItem($key)
+    {
+        $cart_items = session('cart_items', []);
+        if (isset($cart_items[$key])) {
+            unset($cart_items[$key]);
+            session(['cart_items' => array_values($cart_items)]);
+        }
+    }
+
+    public function cancel()
+    {
+        $this->success_message = __('Cancelled');
+        session()->forget('cart_items');
     }
 
     //

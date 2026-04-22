@@ -157,6 +157,21 @@ new class extends Component {
 
         // }
     }
+     function writeLog($message)
+    {
+        $file = 'log.txt';
+
+        $time = date('Y-m-d H:i:s');
+
+        $logMessage = '[' . $time . '] ' . $message . PHP_EOL;
+
+        file_put_contents($file, $logMessage, FILE_APPEND);
+
+        $this->log[] = [
+            'status' => $logMessage,
+        ];
+    }
+
 
     public function cancel()
     {
