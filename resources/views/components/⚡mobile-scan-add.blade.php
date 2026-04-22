@@ -120,7 +120,7 @@ new class extends Component {
             // if product has variations
         } else {
             $this->error_message = __('Invalid barcode');
-             $this->find_product = false;
+            $this->find_product = false;
         }
 
         $this->barcode = '';
@@ -243,14 +243,30 @@ new class extends Component {
         <div id="reader" style="width:350px;"></div>
         <script src="https://unpkg.com/html5-qrcode"></script>
         <script>
+            let lastScanned = null;
+            let scanLock = false;
+
             function onScanSuccess(decodedText, decodedResult) {
 
+                 // Prevent rapid duplicate scans
+            if (scanLock) return;
+
+            // Prevent same barcode repeating
+            if (decodedText === lastScanned) return;
+
+            scanLock = true;
+            lastScanned = decodedText;
                 // Handle on success condition with the decoded text or result.
                 console.log(`Scan result: ${decodedText}`, decodedResult);
                 // document.getElementById('barcode-result').innerText = `Scan result: ${decodedText}`;
                 //set wire:model value
                 $wire.setCode(decodedText);
                 // html5QrcodeScanner.clear();
+                 // Unlock after 2 seconds
+            setTimeout(() => {
+                scanLock = false;
+            }, 2000);
+            
             }
 
             function onScanFailure(error) {
