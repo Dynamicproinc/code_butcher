@@ -1,12 +1,135 @@
 <?php
 
 use Livewire\Component;
+use App\Models\StockTransaction;
+use App\Services\BarcodeService;
+use App\Services\WooCommerceService;
+use App\Models\Product;
+use App\Models\ProductVariation;
 
 new class extends Component
 {
     public $find_product = false;
      public $success_message;
     public $error_message;
+
+    public function setCode($barcode)
+    {
+        // // search the product :
+
+        $quantity_per_item = 1;
+        $barcode_service = new BarcodeService();
+        $wc = new WooCommerceService();
+        $barcode_decode = $barcode_service->decodeBarcode($barcode);
+        // get product details
+        $product_code = $barcode_decode['product_code'];
+        $weight_in_kg = $barcode_decode['weight_in_kg'];
+        $weight = $barcode_decode['weight'];
+
+        $product = Product::where('product_code', $product_code)->first();
+        if ($product) {
+            $this->find_product = true;
+            $this->product_name = $product->product_name;
+
+            $this->variation_weight = $weight - ($weight % $product->threshold);
+            $this->barcode = $barcode;
+        } else {
+            $this->find_product = false;
+            $this->error_message = 'Not registered barcode';
+        }
+    }
+
+    public function add(){
+          
+         
+
+        $barcode = new BarcodeService();
+        $barcode_decode = $barcode->decodeBarcode($this->barcode);
+        
+        $product_code = $barcode_decode['product_code'];
+        $weight_in_kg = $barcode_decode['weight_in_kg'];
+        $weight = $barcode_decode['weight'];
+
+      
+
+        if ($product = Product::where('product_code', $product_code)->first()) {
+            $this->error_message = null;
+            $this->product = $product;
+            $cartItems = session()->get('cart_items', []);
+
+          
+
+            $variation = '0';
+
+            if ($product->variation) {
+                $variation = $weight - ($weight % $product->threshold);
+                $check_vari = ProductVariation::where('product_id', $product->id)->where('variation_code', $variation)->first();
+                if (!$check_vari) {
+                    $this->error_message = 'Variation code: ' . $variation . ' , not registered';
+                    return null;
+                }
+                $cartItems = session()->get('cart_items', []);
+
+                $found = false;
+
+                foreach ($cartItems as $key => $item) {
+                    if ($item['variation'] == $variation && $item['code'] == $product->product_code) {
+                        $cartItems[$key]['quantity'] += 1;
+                        $cartItems[$key]['weight'] += $weight_in_kg;
+                        $found = true;
+                        break;
+                    }
+                }
+
+                if (!$found) {
+                    $cartItems[] = [
+                        'barcode' => $this->barcode,
+                        'code' => $product->product_code,
+                        'description' => $product->product_name,
+                        'variation' => $variation,
+                        'quantity' => 1,
+                        'weight' => $weight_in_kg,
+                    ];
+                }
+
+                session()->put('cart_items', $cartItems);
+
+                
+               
+            } else {
+                $citems = session()->get('cart_items', []);
+                $found_item = false;
+
+                foreach ($citems as $key => $item) {
+                    if ($item['code'] == $product_code) {
+                        $citems[$key]['quantity'] += 1;
+                        $citems[$key]['weight'] += $weight_in_kg;
+                        $found_item = true;
+                        break;
+                    }
+                }
+
+                if (!$found_item) {
+                    $citems[] = [
+                        'barcode' => $this->barcode,
+                        'code' => $product->product_code,
+                        'description' => $product->product_name,
+                        'variation' => $variation,
+                        'quantity' => 1,
+                        'weight' => $weight_in_kg,
+                    ];
+                }
+
+                session()->put('cart_items', $citems);
+            }
+            // if product has variations
+        } else {
+            $this->error_message = __('Invalid barcode');
+        }
+
+        $this->barcode = '';
+    }
+
     //
 };
 ?>
@@ -88,9 +211,9 @@ new class extends Component
 
                     <div>
                         <div class="item-details p-2">
-                            @if (session('cart_items_for_dispatch', []))
+                            @if (session('cart_items', []))
 
-                                @foreach (session('cart_items_for_dispatch') as $key => $item)
+                                @foreach (session('cart_items') as $key => $item)
                                    
                                     <div class="rounded-4 bg-white shadow p-2 px-3 my-3">
                                         <div class="row align-items-center">
