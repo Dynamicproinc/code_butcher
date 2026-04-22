@@ -46,10 +46,18 @@
             width: 100%;
             height: 100%;
             background: rgba(255, 255, 255);
-            display: flex;
+            /* display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
+            z-index: 9999; */
+        }
+        .loading-modal-content{
+            width: 100%;
+            height: 100%;
+            display: flex;
+            /* flex-direction: column; */
+            justify-content: center;
+            align-items: center;
         }
 
         /* .bg-dsbl{
