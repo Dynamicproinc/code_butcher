@@ -247,6 +247,7 @@ new class extends Component {
         <script>
             let lastScanned = null;
             let scanLock = false;
+            let html5QrcodeScanner;
 
             function onScanSuccess(decodedText, decodedResult) {
 
@@ -267,7 +268,25 @@ new class extends Component {
 
             
 
-            const html5QrcodeScanner = new Html5QrcodeScanner(
+            // const html5QrcodeScanner = new Html5QrcodeScanner(
+            //     "reader", {
+            //         fps: 10,
+            //         qrbox: 250,
+            //         formatsToSupport: [
+            //             Html5QrcodeSupportedFormats.CODE_128,
+            //             Html5QrcodeSupportedFormats.EAN_13,
+            //             Html5QrcodeSupportedFormats.EAN_8,
+            //             Html5QrcodeSupportedFormats.UPC_A,
+            //             Html5QrcodeSupportedFormats.UPC_E
+            //         ]
+            //     }
+            // );
+
+            // html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+
+            function startScanner() {
+    if (!html5QrcodeScanner) {
+        const html5QrcodeScanner = new Html5QrcodeScanner(
                 "reader", {
                     fps: 10,
                     qrbox: 250,
@@ -280,8 +299,10 @@ new class extends Component {
                     ]
                 }
             );
+    }
 
-            html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+}
         </script>
         
     </div>
