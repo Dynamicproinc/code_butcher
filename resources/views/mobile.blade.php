@@ -60,10 +60,80 @@
             align-items: center;
         }
 
+       .menu-button {
+    width: 100%;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #333;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.menu-button a {
+    text-decoration: none;
+    color: #000;
+
+}
+
+/* Apply hover to parent AND affect child */
+.menu-button:hover {
+    background: #333;
+    cursor: pointer;
+}
+
+/* Change text color when hovering */
+.menu-button:hover a {
+    color: #fff;
+}
+
         /* .bg-dsbl{
       background-color: #EAE6DD !important;
     
     } */
+
+   .close-link {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  position: relative;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.close-link:hover {
+  background-color: #e0e0e0;
+}
+
+.close-link::before,
+.close-link::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 2px;
+  background-color: #333;
+  transform-origin: center;
+}
+
+.close-link::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.close-link::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+.close-button-area{
+    position: fixed;
+    top:16px;
+    left: 16px;
+    z-index:9999;
+}
     </style>
     
     @livewireStyles

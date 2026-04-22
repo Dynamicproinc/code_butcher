@@ -16,6 +16,7 @@ Route::livewire('/dashboard/test', 'dashboard.test')->name('dashboard.test');
 // Auth::routes();
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/', [App\Http\Controllers\HomeController::class, 'home'])->name('home');
 
 Auth::routes();
 
