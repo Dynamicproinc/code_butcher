@@ -63,6 +63,7 @@ new class extends Component {
                 $check_vari = ProductVariation::where('product_id', $product->id)->where('variation_code', $variation)->first();
                 if (!$check_vari) {
                     $this->error_message = 'Variation code: ' . $variation . ' , not registered';
+                    $this->find_product = false;
                     return null;
                 }
                 $cartItems = session()->get('cart_items', []);
