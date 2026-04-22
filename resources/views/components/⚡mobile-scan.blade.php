@@ -209,10 +209,10 @@ new class extends Component {
             <div class="container">
                 <div class="">
                     <div class=" mb-3">
-                        <div class="">
+                        {{-- <div class="">
                             <input type="text" class="form-control form-control-lg" wire:model="barcode"
                                 placeholder="{{ __('Enter Barcode') }}" autofocus readonly>
-                        </div>
+                        </div> --}}
 
                     </div>
                     <div class="p-2 mb-3">
