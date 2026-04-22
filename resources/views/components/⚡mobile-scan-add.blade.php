@@ -128,6 +128,8 @@ new class extends Component {
         $this->variation_weight = '';
         $this->product_name = '';
         $this->success_message = 'Item added';
+
+        $this->dispatch('start-camera');
     }
 
     function writeLog($message)
@@ -261,6 +263,10 @@ new class extends Component {
                 // document.getElementById('barcode-result').innerText = `Scan result: ${decodedText}`;
                 //set wire:model value
                 $wire.setCode(decodedText);
+                 // 🔴 STOP CAMERA AFTER SUCCESS
+        window.scanner.stop().then(() => {
+            console.log("Scanner stopped");
+        });
                 // beep();
                 // html5QrcodeScanner.clear();
                  // Unlock after 2 seconds
@@ -269,6 +275,27 @@ new class extends Component {
             // }, 2000);
             
             }
+
+            function startScanner() {
+
+        window.scanner.start(
+            { facingMode: "environment" }, // back camera
+            {
+                fps: 10,
+                qrbox: 250,
+            },
+            onScanSuccess
+        ).catch(err => {
+            console.error("Camera start error:", err);
+        });
+
+        console.log("Scanner started");
+    }
+
+    // ✅ Listen to Livewire event
+    Livewire.on('start-camera', () => {
+        startScanner();
+    });
 
             function onScanFailure(error) {
                 console.warn(`Code scan error = ${error}`);
