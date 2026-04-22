@@ -267,7 +267,7 @@ new class extends Component {
         window.scanner.stop().then(() => {
             console.log("Scanner stopped");
         });
-                // beep();
+                 beep();
                 // html5QrcodeScanner.clear();
                  // Unlock after 2 seconds
             // setTimeout(() => {
