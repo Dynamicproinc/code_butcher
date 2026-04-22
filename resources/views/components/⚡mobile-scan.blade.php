@@ -165,7 +165,9 @@ new class extends Component {
     }
      public function update()
     {
-        try {
+       if(session('cart_items_for_dispatch', [])){
+        $this->success_message = __('Dispatch updated');
+         $this->emit('dispatchUpdated'); // Emit an event to notify the parent component try {
             $cart_items = session()->get('cart_items_for_dispatch', []);
         $wc = new WooCommerceService();
         foreach ($cart_items as $item) {
@@ -197,6 +199,9 @@ new class extends Component {
             //  $this->client_message = $th->getMessage();
               $this->error_message = __('Request failed. Please try again.');
         }
+       }else{
+        $this->error_message = __('No items to update');    
+
     }
 };
 ?>
@@ -356,7 +361,7 @@ new class extends Component {
                     <button class="btn btn-default  w-100" wire:click="cancel" wire:confirm="{{ __('Are you sure?') }}">{{ __('Cancel') }}</button>
                 </div>
                 <div class="col-8">
-                    <button class="btn btn-primary  w-100" wire:click="update">{{ __('Update WC') }}</button>
+                    <button class="btn btn-primary  w-100" wire:click="update" wire:confirm="{{ __('Are you sure?') }}">{{ __('Update WC') }}</button>
                 </div>
             </div>
         </div>
