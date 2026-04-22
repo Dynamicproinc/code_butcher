@@ -262,12 +262,13 @@ new class extends Component {
                 console.log(`Scan result: ${decodedText}`, decodedResult);
                 // document.getElementById('barcode-result').innerText = `Scan result: ${decodedText}`;
                 //set wire:model value
+                beep();
                 $wire.setCode(decodedText);
                  // 🔴 STOP CAMERA AFTER SUCCESS
         window.scanner.stop().then(() => {
             console.log("Scanner stopped");
         });
-                 beep();
+                 
                 // html5QrcodeScanner.clear();
                  // Unlock after 2 seconds
             // setTimeout(() => {
