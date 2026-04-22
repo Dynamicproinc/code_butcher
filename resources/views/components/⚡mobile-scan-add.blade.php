@@ -254,6 +254,7 @@ new class extends Component {
                 
                
                 $wire.setCode(decodedText);
+                 html5QrcodeScanner.clear();
               
             }
 
