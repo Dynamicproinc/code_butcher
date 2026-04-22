@@ -249,23 +249,24 @@ new class extends Component {
             function onScanSuccess(decodedText, decodedResult) {
 
                  // Prevent rapid duplicate scans
-            if (scanLock) return;
+            // if (scanLock) return;
 
-            // Prevent same barcode repeating
-            if (decodedText === lastScanned) return;
+            // // Prevent same barcode repeating
+            // if (decodedText === lastScanned) return;
 
-            scanLock = true;
-            lastScanned = decodedText;
+            // scanLock = true;
+            // lastScanned = decodedText;
                 // Handle on success condition with the decoded text or result.
                 console.log(`Scan result: ${decodedText}`, decodedResult);
                 // document.getElementById('barcode-result').innerText = `Scan result: ${decodedText}`;
                 //set wire:model value
                 $wire.setCode(decodedText);
+                beep();
                 // html5QrcodeScanner.clear();
                  // Unlock after 2 seconds
-            setTimeout(() => {
-                scanLock = false;
-            }, 2000);
+            // setTimeout(() => {
+            //     scanLock = false;
+            // }, 2000);
             
             }
 
@@ -273,6 +274,26 @@ new class extends Component {
                 console.warn(`Code scan error = ${error}`);
                 // document.getElementById('barcode-result').innerText = `Scan error: ${error}`;
             }
+
+            function beep() {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(1000, ctx.currentTime); // beep frequency
+
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    oscillator.start();
+
+    // stop after 150ms
+    setTimeout(() => {
+        oscillator.stop();
+        ctx.close();
+    }, 150);
+}
 
             const html5QrcodeScanner = new Html5QrcodeScanner(
                 "reader", {
