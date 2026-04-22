@@ -129,7 +129,7 @@ new class extends Component {
         $this->product_name = '';
         $this->success_message = 'Item added';
 
-        $this->dispatch('start-camera');
+       $this->dispatch('start-qr-scanner');
     }
 
     function writeLog($message)
@@ -304,6 +304,14 @@ new class extends Component {
     html5QrcodeScanner.render(onScanSuccess, onScanFailure);
 }
         </script>
+
+        <script>
+document.addEventListener('livewire:init', () => {
+    Livewire.on('start-qr-scanner', () => {
+        startScanner();
+    });
+});
+</script>
         
     </div>
     <div>
