@@ -1,6 +1,6 @@
-@extends('layouts.dashboard')
+@extends('mobile')
 @section('title', 'Logs')
-@section('content')
+@section('content-mobile')
     <div>
         
 

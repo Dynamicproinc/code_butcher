@@ -27,6 +27,11 @@
                         <a href="{{route('dashboard.product.mobile-scan-dispatch')}}">{{__('Dispatch stock')}}</a>
                     </div>
                 </div>
+                <div class="col-4">
+                    <div class="menu-button">
+                        <a href="{{route('dashboard.logs')}}">{{__('Logs')}}</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
