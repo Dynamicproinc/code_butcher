@@ -1,0 +1,190 @@
+<?php
+
+use Livewire\Component;
+
+new class extends Component
+{
+    public $find_product = false;
+     public $success_message;
+    public $error_message;
+    //
+};
+?>
+
+<div>
+   <div wire:ignore class="camera mb-3">
+        <div id="reader" style="width:350px;"></div>
+        <script src="https://unpkg.com/html5-qrcode"></script>
+        <script>
+            function onScanSuccess(decodedText, decodedResult) {
+
+                // Handle on success condition with the decoded text or result.
+                console.log(`Scan result: ${decodedText}`, decodedResult);
+                // document.getElementById('barcode-result').innerText = `Scan result: ${decodedText}`;
+                //set wire:model value
+                $wire.setCode(decodedText);
+                // html5QrcodeScanner.clear();
+            }
+
+            function onScanFailure(error) {
+                console.warn(`Code scan error = ${error}`);
+                // document.getElementById('barcode-result').innerText = `Scan error: ${error}`;
+            }
+
+            const html5QrcodeScanner = new Html5QrcodeScanner(
+                "reader", {
+                    fps: 10,
+                    qrbox: 250,
+                    formatsToSupport: [
+                        Html5QrcodeSupportedFormats.CODE_128,
+                        Html5QrcodeSupportedFormats.EAN_13,
+                        Html5QrcodeSupportedFormats.EAN_8,
+                        Html5QrcodeSupportedFormats.UPC_A,
+                        Html5QrcodeSupportedFormats.UPC_E
+                    ]
+                }
+            );
+
+            html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+        </script>
+    </div>
+    <div>
+        {{-- for camera --}}
+        <div>
+
+
+
+
+
+            <div class="container">
+                <div class="">
+                    <div class=" mb-3">
+                        {{-- <div class="">
+                            <input type="text" class="form-control form-control-lg" wire:model="barcode"
+                                placeholder="{{ __('Enter Barcode') }}" autofocus readonly>
+                        </div> --}}
+
+                    </div>
+                    <div class="p-2 mb-3">
+                        <div class="row align-items-center">
+                            <div class="col-8">
+                                <div class="">
+                                    @if ($find_product)
+                                        <h5 class="text-uppercase"> {{ $product_name ?? 'No product' }} -
+                                            <strong>{{ $variation_weight }}</strong>
+                                        </h5>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <button class="btn btn-warning w-100" wire:click="add"
+                                    wire:loading.attr="disabled">{{ __('Add') }}</button>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    {{-- table --}}
+
+                    <div>
+                        <div class="item-details p-2">
+                            @if (session('cart_items_for_dispatch', []))
+
+                                @foreach (session('cart_items_for_dispatch') as $key => $item)
+                                   
+                                    <div class="rounded-4 bg-white shadow p-2 px-3 my-3">
+                                        <div class="row align-items-center">
+                                            <div class="col-5">
+                                                <div class="fw-bold text-uppercase">{{ $item['description'] }}</div>
+                                                <div class="small text-muted fw-bold">{{ $item['variation'] }}</div>
+                                            </div>
+                                            <div class="col-5">
+                                                <button class="btn btn-sm btn-outline-primary m-2"
+                                                    wire:click="decrement({{ $key }})"
+                                                    wire:loading.attr="disabled" wire:target="update">-</button>
+                                                <strong
+                                                    style="width:50px;text-align:center">{{ $item['quantity'] }}</strong>
+                                                <button class="btn btn-sm btn-outline-primary m-2"
+                                                    wire:click="increment({{ $key }})"
+                                                    wire:loading.attr="disabled" wire:target="update">+</button>
+                                            </div>
+                                            <div class="col-2">
+                                                <button class="btn btn-default text-danger"
+                                                    wire:confirm="{{ __('Are you sure?') }}"
+                                                    wire:click="removeItem('{{ $key }}')">
+                                                    <i class="bi bi-trash3-fill"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @else
+                                <div class="text-center text-muted">
+                                    No items added yet.
+                                </div>
+
+                            @endif
+
+
+
+
+                        </div>
+                    </div>
+
+                    {{-- end table --}}
+                </div>
+            </div>
+
+
+
+
+
+        </div>
+        {{-- eend camera --}}
+        {{-- succeess --}}
+        @if ($success_message)
+            <div x-data x-init="setTimeout(() => $wire.set('success_message', null), 2000)" class="fixed-top text-white bg-success p-1 text-center">
+                <i class="bi bi-check-circle-fill"></i> {{ $success_message }}
+            </div>
+        @endif
+        {{-- errror --}}
+        @if ($error_message)
+            <div x-data x-init="setTimeout(() => $wire.set('error_message', null), 2000)" class="fixed-top text-white bg-danger p-1 text-center">
+                <i class="bi bi-exclamation-triangle-fill"></i> {{ $error_message }}
+            </div>
+        @endif
+        {{-- bottom buttons --}}
+        <div class="fixed-bottom p-3 bg-light">
+            <div class="row">
+
+                <div class="col-4">
+                    <button class="btn btn-default  w-100" wire:click="cancel" wire:loading.attr="disabled"
+                        wire:confirm="{{ __('Are you sure?') }}">{{ __('Cancel') }}</button>
+                </div>
+                <div class="col-8">
+                    <button class="btn btn-warning  w-100" wire:click="update" wire:loading.attr="disabled"
+                        wire:confirm="{{ __('Are you sure?') }}">
+                        {{ __('Update WC') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+        {{-- loading -modal --}}
+        <div class="loading-modal" wire:loading wire:target="update">
+            <div class="loading-modal-content">
+                <div class="">
+                    <div class="text-center">
+                        {{-- <span class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </span> --}}
+                        <img src="{{asset('uploading.gif')}}" alt="Uploading..." style="width: 150px">
+                        <p class="mb-0">Please wait...</p>
+                        <h5>Uploading data to WC server</h5>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{-- end loading modal --}}
+    </div>
+</div>

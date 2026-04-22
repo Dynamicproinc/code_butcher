@@ -285,14 +285,7 @@ new class extends Component {
                             @if (session('cart_items_for_dispatch', []))
 
                                 @foreach (session('cart_items_for_dispatch') as $key => $item)
-                                    {{-- <li class="list-group-item d-flex justify-content-between align-items-start">
-                                            <div class="ms-2 me-auto">
-                                                <div class="fw-bold text-uppercase">{{ $item['description'] }}</div>
-                                                <div class="small text-muted fw-bold">{{ $item['variation'] }}</div>
-                                            </div>
-                                            <span
-                                                class="badge text-bg-primary rounded-pill">{{ $item['quantity'] }}</span>
-                                        </li> --}}
+                                   
                                     <div class="rounded-4 bg-white shadow p-2 px-3 my-3">
                                         <div class="row align-items-center">
                                             <div class="col-5">

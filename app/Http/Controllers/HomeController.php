@@ -124,9 +124,14 @@ class HomeController extends Controller
         return view('dashboard.inventory.show-product', compact(['product']));
     }
 
-    public function mobileScan(){
+    public function mobileScanDispatch(){
         
-        return view('mobile-dispatch');
+        return view('dashboard.mobile-dispatch-stock');
+    }
+    
+    public function mobileScanAdd(){
+        
+        return view('dashboard.mobile-add-stock');
     }
 
 }
