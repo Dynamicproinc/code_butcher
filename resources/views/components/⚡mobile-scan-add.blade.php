@@ -261,7 +261,7 @@ new class extends Component {
                 // document.getElementById('barcode-result').innerText = `Scan result: ${decodedText}`;
                 //set wire:model value
                 $wire.setCode(decodedText);
-                beep();
+                // beep();
                 // html5QrcodeScanner.clear();
                  // Unlock after 2 seconds
             // setTimeout(() => {
@@ -311,6 +311,7 @@ new class extends Component {
 
             html5QrcodeScanner.render(onScanSuccess, onScanFailure);
         </script>
+        
     </div>
     <div>
         {{-- for camera --}}
