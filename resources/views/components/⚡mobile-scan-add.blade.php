@@ -12,6 +12,7 @@ new class extends Component
     public $find_product = false;
      public $success_message;
     public $error_message;
+    public $variation_weight;
 
     public function setCode($barcode)
     {
