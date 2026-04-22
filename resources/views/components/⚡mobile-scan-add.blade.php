@@ -195,6 +195,54 @@ new class extends Component
         session()->forget('cart_items');
     }
 
+    public function update()
+    {
+        try {
+             $cart_items = session()->get('cart_items', []);
+        $wc = new WooCommerceService();
+        foreach ($cart_items as $item) {
+            // dd($item['code']);
+            // find the prpoduct
+            $product = Product::where('product_code', $item['code'])->first();
+            if ($product) {
+                // check product has variation
+                if ($product->variation) {
+                    // dd($product->wc_product_id);
+                    // need update variation quantity
+                    $v = ProductVariation::where('wc_product_id', $product->wc_product_id)->where('variation_code', $item['variation'])->first();
+
+                    if ($v) {
+                        // $v->quantity += $item['quantity'];
+                        // $v->save();
+
+                        // updating quantites in wc
+                        // $this->updateWc($v->wc_product_id, $v->wc_variation_id, $v->quantity);
+
+                        $wc->updateStock($v->wc_product_id, $v->wc_variation_id, $item['quantity']);
+                        $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update success.');
+                    } else {
+                        $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update faild.');
+                    }
+                } else {
+                    $wc->updateStock($product->wc_product_id, null, $item['quantity']);
+                    $product->quantity += $item['quantity'];
+                    $product->save();
+                    $this->writeLog("Product ID: {$item['code']} Variation ID: " . ($item['variation'] ?? 0) . ' Update success.');
+                }
+            } else {
+                $this->writeLog("Product ID: {$item['code']} Variation ID: " . ($item['variation'] ?? 0) . ' Update failed.');
+            }
+        }
+        session()->forget('cart_items');
+        } catch (\Throwable $th) {
+
+            // $this->client_message = $th->getMessage();
+            $this->client_message = 'The process could not be completed due to an issue connecting to the WooCommerce server.';
+         
+        }
+       
+    }
+
     //
 };
 ?>
