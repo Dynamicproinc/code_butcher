@@ -159,6 +159,10 @@ new class extends Component {
         // }
     }
 
+    public function cancel(){
+        session()->forget('cart_items_for_dispatch');
+         $this->success_message = __('Dispatch cancelled');
+    }
      public function update()
     {
         try {
@@ -349,10 +353,10 @@ new class extends Component {
             <div class="row">
 
                 <div class="col-4">
-                    <button class="btn btn-default  w-100">{{ __('Cancel') }}</button>
+                    <button class="btn btn-default  w-100" wire:click="cancel">{{ __('Cancel') }}</button>
                 </div>
                 <div class="col-8">
-                    <button class="btn btn-primary  w-100">{{ __('Update WC') }}</button>
+                    <button class="btn btn-primary  w-100" wire:click="update">{{ __('Update WC') }}</button>
                 </div>
             </div>
         </div>
