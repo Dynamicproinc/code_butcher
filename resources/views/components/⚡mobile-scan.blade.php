@@ -353,7 +353,7 @@ new class extends Component {
             <div class="row">
 
                 <div class="col-4">
-                    <button class="btn btn-default  w-100" wire:click="cancel">{{ __('Cancel') }}</button>
+                    <button class="btn btn-default  w-100" wire:click="cancel" wire:confirm="{{ __('Are you sure?') }}">{{ __('Cancel') }}</button>
                 </div>
                 <div class="col-8">
                     <button class="btn btn-primary  w-100" wire:click="update">{{ __('Update WC') }}</button>
