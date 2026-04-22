@@ -7,14 +7,14 @@ use App\Services\WooCommerceService;
 use App\Models\Product;
 use App\Models\ProductVariation;
 
-new class extends Component
-{
+new class extends Component {
     public $find_product = false;
-     public $success_message;
+    public $success_message;
     public $error_message;
     public $variation_weight;
     public $product_name;
     public $barcode;
+    public $log = [];
 
     public function setCode($barcode)
     {
@@ -42,25 +42,19 @@ new class extends Component
         }
     }
 
-    public function add(){
-          
-         
-
+    public function add()
+    {
         $barcode = new BarcodeService();
         $barcode_decode = $barcode->decodeBarcode($this->barcode);
-        
+
         $product_code = $barcode_decode['product_code'];
         $weight_in_kg = $barcode_decode['weight_in_kg'];
         $weight = $barcode_decode['weight'];
-
-      
 
         if ($product = Product::where('product_code', $product_code)->first()) {
             $this->error_message = null;
             $this->product = $product;
             $cartItems = session()->get('cart_items', []);
-
-          
 
             $variation = '0';
 
@@ -96,9 +90,6 @@ new class extends Component
                 }
 
                 session()->put('cart_items', $cartItems);
-
-                
-               
             } else {
                 $citems = session()->get('cart_items', []);
                 $found_item = false;
@@ -128,6 +119,7 @@ new class extends Component
             // if product has variations
         } else {
             $this->error_message = __('Invalid barcode');
+             $this->find_product = false;
         }
 
         $this->barcode = '';
@@ -137,7 +129,7 @@ new class extends Component
         $this->success_message = 'Item added';
     }
 
-     function writeLog($message)
+    function writeLog($message)
     {
         $file = 'log.txt';
 
@@ -147,12 +139,12 @@ new class extends Component
 
         file_put_contents($file, $logMessage, FILE_APPEND);
 
-        // $this->log[] = [
-        //     'status' => $logMessage,
-        // ];
+        $this->log[] = [
+            'status' => $logMessage,
+        ];
     }
 
-     public function increment($id)
+    public function increment($id)
     {
         $cart_items = session('cart_items', []);
         if (isset($cart_items[$id])) {
@@ -180,7 +172,7 @@ new class extends Component
         // }
     }
 
-     public function removeItem($key)
+    public function removeItem($key)
     {
         $cart_items = session('cart_items', []);
         if (isset($cart_items[$key])) {
@@ -198,50 +190,47 @@ new class extends Component
     public function update()
     {
         try {
-             $cart_items = session()->get('cart_items', []);
-        $wc = new WooCommerceService();
-        foreach ($cart_items as $item) {
-            // dd($item['code']);
-            // find the prpoduct
-            $product = Product::where('product_code', $item['code'])->first();
-            if ($product) {
-                // check product has variation
-                if ($product->variation) {
-                    // dd($product->wc_product_id);
-                    // need update variation quantity
-                    $v = ProductVariation::where('wc_product_id', $product->wc_product_id)->where('variation_code', $item['variation'])->first();
+            $cart_items = session()->get('cart_items', []);
+            $wc = new WooCommerceService();
+            foreach ($cart_items as $item) {
+                // dd($item['code']);
+                // find the prpoduct
+                $product = Product::where('product_code', $item['code'])->first();
+                if ($product) {
+                    // check product has variation
+                    if ($product->variation) {
+                        // dd($product->wc_product_id);
+                        // need update variation quantity
+                        $v = ProductVariation::where('wc_product_id', $product->wc_product_id)->where('variation_code', $item['variation'])->first();
 
-                    if ($v) {
-                        // $v->quantity += $item['quantity'];
-                        // $v->save();
+                        if ($v) {
+                            // $v->quantity += $item['quantity'];
+                            // $v->save();
 
-                        // updating quantites in wc
-                        // $this->updateWc($v->wc_product_id, $v->wc_variation_id, $v->quantity);
+                            // updating quantites in wc
+                            // $this->updateWc($v->wc_product_id, $v->wc_variation_id, $v->quantity);
 
-                        $wc->updateStock($v->wc_product_id, $v->wc_variation_id, $item['quantity']);
-                        $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update success.');
+                            $wc->updateStock($v->wc_product_id, $v->wc_variation_id, $item['quantity']);
+                            $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update success.');
+                        } else {
+                            $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update faild.');
+                        }
                     } else {
-                        $this->writeLog('Product ID: ' . $item['code'] . ' Variation ID: ' . $item['variation'] . ' Update faild.');
+                        $wc->updateStock($product->wc_product_id, null, $item['quantity']);
+                        $product->quantity += $item['quantity'];
+                        $product->save();
+                        $this->writeLog("Product ID: {$item['code']} Variation ID: " . ($item['variation'] ?? 0) . ' Update success.');
                     }
                 } else {
-                    $wc->updateStock($product->wc_product_id, null, $item['quantity']);
-                    $product->quantity += $item['quantity'];
-                    $product->save();
-                    $this->writeLog("Product ID: {$item['code']} Variation ID: " . ($item['variation'] ?? 0) . ' Update success.');
+                    $this->writeLog("Product ID: {$item['code']} Variation ID: " . ($item['variation'] ?? 0) . ' Update failed.');
                 }
-            } else {
-                $this->writeLog("Product ID: {$item['code']} Variation ID: " . ($item['variation'] ?? 0) . ' Update failed.');
             }
-        }
-        session()->forget('cart_items');
+            session()->forget('cart_items');
         } catch (\Throwable $th) {
-
             // $this->client_message = $th->getMessage();
             $this->error_message = 'Uploading failed, try again';
-             $this->writeLog('Error: ' . $th->getMessage());
-         
+            $this->writeLog('Error: ' . $th->getMessage());
         }
-       
     }
 
     //
@@ -249,7 +238,7 @@ new class extends Component
 ?>
 
 <div>
-   <div wire:ignore class="camera mb-3">
+    <div wire:ignore class="camera mb-3">
         <div id="reader" style="width:350px;"></div>
         <script src="https://unpkg.com/html5-qrcode"></script>
         <script>
@@ -328,7 +317,6 @@ new class extends Component
                             @if (session('cart_items', []))
 
                                 @foreach (session('cart_items') as $key => $item)
-                                   
                                     <div class="rounded-4 bg-white shadow p-2 px-3 my-3">
                                         <div class="row align-items-center">
                                             <div class="col-5">
@@ -361,6 +349,18 @@ new class extends Component
                                 </div>
 
                             @endif
+
+                            <div class="log-box">
+                                @if (count($log))
+                                    <h6>Log</h6>
+                                    @foreach ($log as $item)
+                                        <div
+                                            class="{{ str_contains(strtolower($item['status']), 'faild') ? 'text-danger' : '' }}">
+                                            {{ $item['status'] }}
+                                        </div>
+                                    @endforeach
+                                @endif
+                            </div>
 
 
 
@@ -414,7 +414,7 @@ new class extends Component
                         {{-- <span class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
                         </span> --}}
-                        <img src="{{asset('uploading.gif')}}" alt="Uploading..." style="width: 150px">
+                        <img src="{{ asset('uploading.gif') }}" alt="Uploading..." style="width: 150px">
                         <p class="mb-0">Please wait...</p>
                         <h5>Uploading data to WC server</h5>
 

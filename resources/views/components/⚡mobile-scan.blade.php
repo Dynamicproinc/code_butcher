@@ -14,6 +14,7 @@ new class extends Component {
     public $find_product = false;
     public $success_message;
     public $error_message;
+    public $log = [];
     // public $product;
 
     public function setCode($barcode)
@@ -157,7 +158,7 @@ new class extends Component {
 
         // }
     }
-     function writeLog($message)
+    function writeLog($message)
     {
         $file = 'log.txt';
 
@@ -167,11 +168,10 @@ new class extends Component {
 
         file_put_contents($file, $logMessage, FILE_APPEND);
 
-        // $this->log[] = [
-        //     'status' => $logMessage,
-        // ];
+        $this->log[] = [
+            'status' => $logMessage,
+        ];
     }
-
 
     public function cancel()
     {
@@ -301,7 +301,6 @@ new class extends Component {
                             @if (session('cart_items_for_dispatch', []))
 
                                 @foreach (session('cart_items_for_dispatch') as $key => $item)
-                                   
                                     <div class="rounded-4 bg-white shadow p-2 px-3 my-3">
                                         <div class="row align-items-center">
                                             <div class="col-5">
@@ -334,7 +333,17 @@ new class extends Component {
                                 </div>
 
                             @endif
-
+                            <div class="log-box">
+                                @if (count($log))
+                                    <h6>Log</h6>
+                                    @foreach ($log as $item)
+                                        <div
+                                            class="{{ str_contains(strtolower($item['status']), 'faild') ? 'text-danger' : '' }}">
+                                            {{ $item['status'] }}
+                                        </div>
+                                    @endforeach
+                                @endif
+                            </div>
 
 
 
@@ -387,7 +396,7 @@ new class extends Component {
                         {{-- <span class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
                         </span> --}}
-                        <img src="{{asset('uploading.gif')}}" alt="Uploading..." style="width: 150px">
+                        <img src="{{ asset('uploading.gif') }}" alt="Uploading..." style="width: 150px">
                         <p class="mb-0">Please wait...</p>
                         <h5>Uploading data to WC server</h5>
 
