@@ -165,9 +165,12 @@ new class extends Component {
     }
      public function update()
     {
-       if(session('cart_items_for_dispatch', [])){
-        $this->success_message = __('Dispatch updated');
-         $this->emit('dispatchUpdated'); // Emit an event to notify the parent component try {
+       if(!session('cart_items_for_dispatch', [])){
+        
+         $this->error_message = __('No items to update');
+         return null;
+       }
+        try {
             $cart_items = session()->get('cart_items_for_dispatch', []);
         $wc = new WooCommerceService();
         foreach ($cart_items as $item) {
@@ -199,9 +202,6 @@ new class extends Component {
             //  $this->client_message = $th->getMessage();
               $this->error_message = __('Request failed. Please try again.');
         }
-       }else{
-        $this->error_message = __('No items to update');    
-
     }
 };
 ?>
@@ -302,11 +302,11 @@ new class extends Component {
                                             </div>
                                             <div class="col-5">
                                                 <button class="btn btn-sm btn-outline-primary m-2"
-                                                    wire:click="decrement({{ $key }})">-</button>
+                                                    wire:click="decrement({{ $key }})"  wire:loading.attr="disabled" wire:target="update">-</button>
                                                 <strong
                                                     style="width:50px;text-align:center">{{ $item['quantity'] }}</strong>
                                                 <button class="btn btn-sm btn-outline-primary m-2"
-                                                    wire:click="increment({{ $key }})">+</button>
+                                                    wire:click="increment({{ $key }})"  wire:loading.attr="disabled" wire:target="update">+</button>
                                             </div>
                                             <div class="col-2">
                                                 <button class="btn btn-default text-danger"
@@ -358,10 +358,12 @@ new class extends Component {
             <div class="row">
 
                 <div class="col-4">
-                    <button class="btn btn-default  w-100" wire:click="cancel" wire:confirm="{{ __('Are you sure?') }}">{{ __('Cancel') }}</button>
+                    <button class="btn btn-default  w-100" wire:click="cancel"  wire:loading.attr="disabled" wire:confirm="{{ __('Are you sure?') }}">{{ __('Cancel') }}</button>
                 </div>
                 <div class="col-8">
-                    <button class="btn btn-primary  w-100" wire:click="update" wire:confirm="{{ __('Are you sure?') }}">{{ __('Update WC') }}</button>
+                    <button class="btn btn-primary  w-100" wire:click="update"  wire:loading.attr="disabled" wire:confirm="{{ __('Are you sure?') }}">
+                        {{ __('Update WC') }}
+                    </button>
                 </div>
             </div>
         </div>
