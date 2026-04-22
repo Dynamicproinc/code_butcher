@@ -371,13 +371,14 @@ new class extends Component {
             </div>
         </div>
         {{-- loading -modal --}}
-        <div class="loading-modal" wire:loading.flex wire:target="update">
+        <div class="loading-modal" wire:loading wire:target="update">
             <div class="loading-modal-content">
                 <div class="">
                     <div class="text-center">
-                        <span class="spinner-border text-primary" role="status">
+                        {{-- <span class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
-                        </span>
+                        </span> --}}
+                        <img src="{{asset('uploading.gif')}}" alt="Uploading..." style="width: 150px">
                         <p class="mb-0">Please wait...</p>
                         <h5>Uploading data to WC server</h5>
 

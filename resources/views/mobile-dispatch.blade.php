@@ -45,7 +45,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255);
             display: flex;
             justify-content: center;
             align-items: center;
