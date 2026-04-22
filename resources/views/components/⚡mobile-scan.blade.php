@@ -264,9 +264,9 @@ new class extends Component {
                             <div class="col-8">
                                 <div class="">
                                     @if ($find_product)
-                                        <h6 class="text-uppercase"> {{ $product_name ?? 'No product' }} -
+                                        <h5 class="text-uppercase"> {{ $product_name ?? 'No product' }} -
                                             <strong>{{ $variation_weight }}</strong>
-                                        </h6>
+                                        </h5>
                                     @endif
                                 </div>
                             </div>
