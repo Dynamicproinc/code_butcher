@@ -46,34 +46,7 @@
             <div>
                 {{ $logs->links() }}
             </div>
-<div id="scanner" style="width:300px; height:200px;"></div>
 
-<script src="https://unpkg.com/quagga/dist/quagga.min.js"></script>
-<script>
-Quagga.init({
-  inputStream: {
-    type: "LiveStream",
-    target: document.querySelector('#scanner'),
-    constraints: {
-      facingMode: "environment"
-    }
-  },
-  decoder: {
-    readers: ["ean_reader", "code_128_reader", "upc_reader"]
-  }
-}, function(err) {
-  if (err) {
-    console.log(err);
-    return;
-  }
-  Quagga.start();
-});
-
-Quagga.onDetected(function(result) {
-  console.log("Barcode:", result.codeResult.code);
-  alert(result.codeResult.code);
-});
-</script>
         </div>
     </div>
 @endsection

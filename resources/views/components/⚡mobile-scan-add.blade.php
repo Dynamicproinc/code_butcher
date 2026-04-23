@@ -248,15 +248,20 @@ new class extends Component {
             let lastScanned = null;
             let scanLock = false;
 
-            function onScanSuccess(decodedText, decodedResult) {
+          let scanProcessed = false;
 
-                console.log(`Scan result: ${decodedText}`, decodedResult);
-                
-               
-                $wire.setCode(decodedText);
-                 
-              
-            }
+function onScanSuccess(decodedText, decodedResult) {
+
+    if (scanProcessed) return;
+    scanProcessed = true;
+
+    console.log(`Scan result: ${decodedText}`, decodedResult);
+
+    setTimeout(() => {
+        $wire.setCode(decodedText);
+    }, 2000);
+
+}
 
             
 
