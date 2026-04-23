@@ -44,6 +44,7 @@ new class extends Component {
 
     public function add()
     {
+       
         $barcode = new BarcodeService();
         $barcode_decode = $barcode->decodeBarcode($this->barcode);
 
@@ -248,20 +249,14 @@ new class extends Component {
             let lastScanned = null;
             let scanLock = false;
 
-          let scanProcessed = false;
+            function onScanSuccess(decodedText, decodedResult) {
 
-function onScanSuccess(decodedText, decodedResult) {
-
-    if (scanProcessed) return;
-    scanProcessed = true;
-
-    console.log(`Scan result: ${decodedText}`, decodedResult);
-
-    setTimeout(() => {
-        $wire.setCode(decodedText);
-    }, 2000);
-
-}
+                console.log(`Scan result: ${decodedText}`, decodedResult);
+                              
+                $wire.setCode(decodedText);
+                 
+              
+            }
 
             
 
@@ -288,6 +283,7 @@ function onScanSuccess(decodedText, decodedResult) {
 
             html5QrcodeScanner.render(onScanSuccess, onScanFailure);
 
+          
             
         </script>
         
