@@ -46,17 +46,22 @@
             <div>
                 {{ $logs->links() }}
             </div>
-
-            <video id="video" width="300"></video>
-
-<script src="https://unpkg.com/@zxing/library@latest"></script>
+<video id="video" width="300" height="200" style="border:1px solid black"></video>
+         <script src="https://unpkg.com/@zxing/library@0.19.1"></script>
 <script>
-  const codeReader = new ZXing.BrowserBarcodeReader();
+  const hints = new Map();
+  hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [
+    ZXing.BarcodeFormat.EAN_13,
+    ZXing.BarcodeFormat.CODE_128,
+    ZXing.BarcodeFormat.UPC_A
+  ]);
+
+  const codeReader = new ZXing.BrowserMultiFormatReader(hints);
   const videoElement = document.getElementById('video');
 
   codeReader.decodeFromVideoDevice(null, videoElement, (result, err) => {
     if (result) {
-      console.log("Barcode:", result.text);
+      console.log("✅ Scanned:", result.text);
       alert(result.text);
     }
   });
