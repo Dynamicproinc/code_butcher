@@ -4,7 +4,7 @@
     <div class="container">
         <div style="height: 100vh" class="p-3">
 
-            <h5><a href="/" style="text-decoration: none">
+            <h5 class="mb-3"><a href="/" style="text-decoration: none; color:#333">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                         class="bi bi-arrow-left" viewBox="0 0 16 16">
                         <path fill-rule="evenodd"
@@ -26,8 +26,9 @@
                         </tr>
                     </thead>
                     <tbody>
+                        
                         @foreach ($logs as $item)
-                            <tr class="@if ($item->type == 'OUT') tbl-red @else tbl-green @endif">
+                            <tr class="@if($item->type === 'OUT') tbl-red @else tbl-green @endif">
                                 <td>{{ $item->created_at }}</td>
                                 <td>{{ $item->user->name }}</td>
                                 <td>{{ $item->type }}</td>
