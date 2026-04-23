@@ -46,25 +46,33 @@
             <div>
                 {{ $logs->links() }}
             </div>
-<video id="video" width="300" height="200" style="border:1px solid black"></video>
-         <script src="https://unpkg.com/@zxing/library@0.19.1"></script>
+<div id="scanner" style="width:300px; height:200px;"></div>
+
+<script src="https://unpkg.com/quagga/dist/quagga.min.js"></script>
 <script>
-  const hints = new Map();
-  hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [
-    ZXing.BarcodeFormat.EAN_13,
-    ZXing.BarcodeFormat.CODE_128,
-    ZXing.BarcodeFormat.UPC_A
-  ]);
-
-  const codeReader = new ZXing.BrowserMultiFormatReader(hints);
-  const videoElement = document.getElementById('video');
-
-  codeReader.decodeFromVideoDevice(null, videoElement, (result, err) => {
-    if (result) {
-      console.log("✅ Scanned:", result.text);
-      alert(result.text);
+Quagga.init({
+  inputStream: {
+    type: "LiveStream",
+    target: document.querySelector('#scanner'),
+    constraints: {
+      facingMode: "environment"
     }
-  });
+  },
+  decoder: {
+    readers: ["ean_reader", "code_128_reader", "upc_reader"]
+  }
+}, function(err) {
+  if (err) {
+    console.log(err);
+    return;
+  }
+  Quagga.start();
+});
+
+Quagga.onDetected(function(result) {
+  console.log("Barcode:", result.codeResult.code);
+  alert(result.codeResult.code);
+});
 </script>
         </div>
     </div>
