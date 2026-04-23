@@ -19,17 +19,18 @@
             <div class="row">
                 <div class="col-4">
                     <div class="menu-button">
-                        <a href="{{route('dashboard.product.mobile-scan-add')}}">{{__('Stock-In')}}</a>
+                        
+                        <a href="{{route('dashboard.product.mobile-scan-add')}}"><i class="bi bi-box-arrow-in-down me-2"></i> {{__('Stock-In')}}</a>
                     </div>
                 </div>
                 <div class="col-4">
                     <div class="menu-button">
-                        <a href="{{route('dashboard.product.mobile-scan-dispatch')}}">{{__('Dispatch stock')}}</a>
+                        <a href="{{route('dashboard.product.mobile-scan-dispatch')}}"><i class="bi bi-box-arrow-up me-2"></i> {{__('Dispatch')}}</a>
                     </div>
                 </div>
                 <div class="col-4">
                     <div class="menu-button">
-                        <a href="{{route('dashboard.logs')}}">{{__('Logs')}}</a>
+                        <a href="{{route('dashboard.logs')}}"><i class="bi bi-file-text me-2"></i> {{__('Logs')}}</a>
                     </div>
                 </div>
             </div>

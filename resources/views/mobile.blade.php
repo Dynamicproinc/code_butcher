@@ -68,32 +68,38 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            border: 1px solid #333;
+            border: 1px solid #cbcaca;
             border-radius: 8px;
             text-align: center;
         }
 
         .menu-button a {
             text-decoration: none;
-            color: #000;
+            color: #333;
             display: inline-block;
             width: 100%;
             height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
+            font-size:14px;
+                font-family: 'JetBrains Mono', monospace !important;
+                text-transform: uppercase;
+                font-weight: 600;
+                background: #eee;
+                border-radius: 8px;
 
         }
 
         /* Apply hover to parent AND affect child */
         .menu-button:hover {
-            background: #333;
+            /* background: #333; */
             cursor: pointer;
         }
 
         /* Change text color when hovering */
         .menu-button:hover a {
-            color: #fff;
+            /* color: #fff; */
         }
 
         /* .bg-dsbl{
