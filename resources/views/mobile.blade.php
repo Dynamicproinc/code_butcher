@@ -157,7 +157,7 @@
         td,th {
             font-size: 14px;
             text-transform: uppercase;
-
+            white-space: nowrap !important;
             /* font-family: Verdana, Geneva, Tahoma, sans-serif */
             font-family: 'JetBrains Mono', monospace !important;
         }
